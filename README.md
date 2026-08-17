@@ -20,6 +20,19 @@ Ouvrir `index.html` directement dans un navigateur fonctionne également, mais l
 carte de la page Contact et le chargement des polices se comportent mieux via
 `http://`.
 
+## Modifier le site sans écrire de code
+
+```bash
+node admin.mjs
+```
+
+Puis <http://localhost:5174/admin> : une interface locale pour ajouter des
+pages, et ajouter, modifier, déplacer ou supprimer les textes et les images.
+Elle écrit directement dans les fichiers `.html` du dossier — le site reste
+strictement statique. Chaque action est sauvegardée et annulable.
+
+Voir la section 13 de [CLAUDE.md](CLAUDE.md) pour le détail.
+
 ## Pages
 
 | Fichier | Page |
@@ -41,6 +54,7 @@ assets/css/fonts.css     @font-face des polices auto-hébergées
 assets/fonts/            Cormorant Garamond + Jost (woff2)
 assets/js/main.js        menu mobile, visionneuse, apparitions, formulaire
 assets/img/              photographies de l'atelier et logos partenaires
+admin.mjs · admin/       interface d'administration locale (non publiée)
 ```
 
 ## Caractéristiques
@@ -62,5 +76,5 @@ solution d'envoi pour le formulaire de contact (actuellement en `mailto:`).
 
 Le dossier est directement publiable tel quel sur n'importe quel hébergement
 statique — GitHub Pages, Netlify, Cloudflare Pages, ou un simple espace FTP.
-Aucune commande de build n'est nécessaire ; `serve.mjs` et `.claude/` ne servent
-qu'au développement local.
+Aucune commande de build n'est nécessaire ; `serve.mjs`, `admin.mjs`, `admin/`
+et `.claude/` ne servent qu'au travail local et n'ont pas à être mis en ligne.

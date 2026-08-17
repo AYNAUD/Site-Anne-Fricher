@@ -542,6 +542,14 @@ hr {
   align-items: center;
 }
 
+/* Image isolée dans un bloc de texte (blocs ajoutés depuis l'administration) */
+.figure-libre {
+  width: 100%;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  margin: var(--sp-3) 0;
+}
+
 /* Ligne d'action centrée sous une section */
 .section-action { text-align: center; margin-top: clamp(2rem, 4vw, 3rem); }
 
