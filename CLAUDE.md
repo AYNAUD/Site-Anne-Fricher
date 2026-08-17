@@ -152,7 +152,6 @@ photo** avant d'écrire son `alt` et son `data-caption`.
 |---|---|---|
 | Mentions légales | `mentions-legales.html` | Renseigner SIRET, forme juridique, TVA, hébergeur. Champs entre `[crochets]`. |
 | Domaine | toutes les pages | Les `canonical`, `robots.txt` et `sitemap.xml` pointent vers `https://www.atelierannefricher.fr/` — valeur supposée, à remplacer par le domaine réel. |
-| Coordonnées de la carte | `contact.html` | Le marqueur OpenStreetMap est positionné à `43.8375, 4.3600` (centre de Nîmes, **approximatif**). À corriger avec les coordonnées exactes du 2 rue Villars. |
 | Formulaire de contact | `contact.html`, `main.js` | Fonctionne actuellement en `mailto:` (voir §8). |
 | Année de création | toutes les pages | Le bandeau affiche « Nîmes · depuis 2003 », déduit du « plus de 20 ans d'expérience » du site Wix. **À confirmer auprès d'Anne Fricher.** |
 | Horaires d'ouverture | `contact.html` | Absents du site Wix. Mention actuelle : « reçoit sur rendez-vous ». À préciser si des horaires existent. |
