@@ -1,0 +1,22 @@
+# Système
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node (si un outil de build est ajouté plus tard)
+node_modules/
+dist/
+.cache/
+npm-debug.log*
+
+# Fichiers de travail
+*.log
+*.tmp
+/scratch/
