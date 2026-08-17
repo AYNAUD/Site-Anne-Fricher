@@ -7,6 +7,13 @@
       "runtimeArgs": ["serve.mjs"],
       "port": 5173,
       "autoPort": true
+    },
+    {
+      "name": "admin",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["admin.mjs"],
+      "port": 5174,
+      "autoPort": true
     }
   ]
 }

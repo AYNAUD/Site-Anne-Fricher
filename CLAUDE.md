@@ -43,6 +43,12 @@ demande explicitement. Le site doit rester ouvrable en double-cliquant sur
 ├── mentions-legales.html           ⚠️ contient des champs [à compléter]
 ├── robots.txt · sitemap.xml
 ├── serve.mjs                       Serveur statique local, sans dépendance
+├── admin.mjs                       Serveur d'administration local (voir §13)
+├── admin/                          Interface d'administration — jamais mise en ligne
+│   ├── index.html · admin.css · admin.js   Interface (navigateur)
+│   ├── apercu.js                   Script injecté dans l'aperçu, jamais dans les fichiers
+│   └── lib/                        Modules serveur : html, blocs, document, images,
+│                                   pages, sauvegardes
 ├── .claude/launch.json             Configuration de prévisualisation
 └── assets/
     ├── css/style.css               Feuille de style unique (12 sections numérotées)
@@ -73,6 +79,9 @@ Puis <http://localhost:5173>. Un port peut être passé en argument :
 
 Ouvrir `index.html` directement en `file://` fonctionne aussi, mais l'iframe de la
 carte et le chargement des polices se comportent mieux via `http://`.
+
+Pour modifier le contenu sans écrire de code, voir §13 : `node admin.mjs`, puis
+<http://localhost:5174/admin>.
 
 ## 5. Conventions à respecter
 
@@ -226,3 +235,102 @@ mettre à jour partout** :
 ```bash
 grep -rn "0674398593\|atelierannefricher@outlook.fr\|rue Villars" *.html
 ```
+
+---
+
+## 13. Interface d'administration
+
+```bash
+node admin.mjs
+```
+
+→ <http://localhost:5174/admin> (le site reste servi sur `/`). Le serveur
+n'écoute que sur `127.0.0.1`.
+
+Permet, sans écrire de code : **ajouter une page**, et **ajouter, modifier,
+déplacer, dupliquer ou supprimer** les textes, les images, les galeries et les
+sections d'une page.
+
+### Ce que c'est — et ce que ce n'est pas
+
+Ce n'est **pas** un CMS : il n'y a ni base de données, ni fichier de contenu
+intermédiaire, ni étape de génération. L'interface **modifie directement les
+fichiers `.html` du dépôt**, qui restent la seule source de vérité. Une fois les
+modifications faites, on livre le dossier tel quel (§Déploiement du README) et on
+commite les fichiers modifiés. Les contraintes de la §2 sont donc intactes.
+
+`admin.mjs`, `admin/` et `.admin-sauvegardes/` **ne doivent pas être mis en
+ligne** ; `admin/` est en `Disallow` dans `robots.txt` et les sauvegardes sont
+ignorées par git.
+
+### Comment les modifications sont écrites
+
+`admin/lib/html.mjs` analyse la page en conservant la **position exacte** de
+chaque nœud dans le fichier ; les modifications sont appliquées par découpes sur
+la chaîne d'origine. Tout ce qui n'est pas touché ressort **identique au
+caractère près** — indentation, commentaires de section, entités. Un aller-retour
+« modifier puis annuler » redonne un fichier strictement identique (vérifié).
+
+Conséquences à connaître :
+
+- Les textes saisis sont **assainis** : seul un balisage en ligne restreint est
+  conservé (`<strong> <em> <a> <br> <span>…`), le reste est échappé. Une saisie
+  ne peut pas casser une page.
+- La **typographie française de la §5 est appliquée automatiquement** :
+  apostrophes courbes et `&nbsp;` devant `? ! : ;`.
+- Remplacer une image met à jour `width` et `height` toute seule, en lisant les
+  dimensions dans l'en-tête binaire du fichier (`admin/lib/images.mjs`).
+- Un commentaire de section (`<!-- ===== HERO ===== -->`) suit le bloc qu'il
+  annonce lors d'un déplacement ou d'une suppression.
+
+### Sauvegardes et annulation
+
+Toute action passe par une transaction (`admin/lib/sauvegardes.mjs`) : les
+fichiers touchés sont copiés dans `.admin-sauvegardes/<horodatage>/` avant
+écriture, et le journal permet d'annuler action par action depuis la barre du
+haut — y compris une action qui a modifié huit fichiers (ajout au menu) ou créé
+une page (l'annulation supprime alors le fichier créé).
+
+### Ajout d'une page
+
+L'en-tête et le pied de page sont recopiés depuis `portfolio.html` (le site n'a
+pas de gabarit, cf. §5). Si la case « ajouter au menu » est cochée, le lien est
+inséré dans le menu et le pied de page **des huit pages**, et la page est ajoutée
+à `sitemap.xml`. Le `canonical` reprend le domaine des autres pages — donc la
+valeur supposée de la §7, à corriger le jour où le domaine réel est connu.
+
+Restent à faire à la main sur une page créée : relire le `<title>` et la
+`meta description` (générés), et choisir l'image `og:image` (celle de la page de
+référence par défaut).
+
+### Ajouter du contenu : la bibliothèque de blocs
+
+`admin/lib/blocs.mjs` décrit à la fois **comment nommer** les blocs existants et
+**quel balisage produire** pour les nouveaux. Les modèles n'emploient que des
+classes déjà définies dans `style.css` (`section`, `split`, `gallery`, `card`,
+`btn`…) : ne pas inventer de classe sans ajouter la règle correspondante dans la
+bonne section de la feuille de style. Seule exception introduite avec
+l'administration : `.figure-libre` (image isolée), §7 de `style.css`.
+
+Les modèles disponibles dépendent de l'endroit visé (`contexteDe`) : sections à
+la racine de `<main>`, blocs de contenu dans une section, vignettes dans une
+galerie, éléments dans une liste, cartes dans une grille.
+
+### Sélection dans l'aperçu
+
+L'aperçu est servi avec `?apercu=1`, ce qui **injecte à la lecture**
+`admin/apercu.js` — ce script n'est jamais écrit dans les fichiers. Il repère un
+bloc par sa suite d'indices d'éléments depuis `<main>` (« 2.0.1.1 »), la même que
+celle calculée côté serveur : c'est ce qui permet de cliquer dans la page pour
+sélectionner un bloc. Si l'un des deux calculs change, l'autre doit changer aussi.
+
+### Limites assumées
+
+- Pas de suppression de page ni de renommage : à faire à la main (et à
+  répercuter dans le menu, `sitemap.xml` et les liens internes).
+- Pas de suppression de fichier image : l'administration retire une image d'une
+  page, jamais du dossier `assets/img/`.
+- Le formulaire de contact, le JSON-LD et les mentions légales ne sont pas
+  modifiables ici : ils se modifient dans les fichiers.
+- Un seul utilisateur à la fois : deux onglets ouverts sur la même page peuvent
+  écrire l'un sur l'autre.

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Administration — Atelier Anne Fricher</title>
+<link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/admin/admin.css">
+<script src="/admin/admin.js" defer></script>
+</head>
+
+<body>
+
+<header class="barre">
+  <div class="barre__titre">
+    <strong>Atelier Anne Fricher</strong>
+    <span>Administration du site</span>
+  </div>
+
+  <label class="barre__page">
+    Page
+    <select id="choix-page" aria-label="Page à modifier"></select>
+  </label>
+
+  <div class="barre__actions">
+    <button type="button" class="bouton" id="btn-nouvelle-page">Nouvelle page</button>
+    <button type="button" class="bouton" id="btn-medias">Médias</button>
+    <button type="button" class="bouton" id="btn-annuler">Annuler la dernière action</button>
+    <a class="bouton bouton--discret" id="lien-site" href="/" target="_blank" rel="noopener">Voir le site</a>
+  </div>
+</header>
+
+<main class="atelier">
+
+  <!-- ============ Colonne de gauche : structure ============ -->
+  <section class="panneau panneau--structure" aria-label="Structure de la page">
+    <div class="panneau__tete">
+      <h2>Contenu de la page</h2>
+      <button type="button" class="bouton bouton--petit" id="btn-ajouter-section">+ Section</button>
+    </div>
+    <div class="arbre" id="arbre" role="tree" aria-label="Blocs de la page"></div>
+  </section>
+
+  <!-- ============ Aperçu ============ -->
+  <section class="panneau panneau--apercu" aria-label="Aperçu de la page">
+    <div class="panneau__tete">
+      <h2>Aperçu</h2>
+      <div class="largeurs" role="group" aria-label="Largeur d'aperçu">
+        <button type="button" class="bouton bouton--petit est-actif" data-largeur="0">Pleine</button>
+        <button type="button" class="bouton bouton--petit" data-largeur="1280">1280</button>
+        <button type="button" class="bouton bouton--petit" data-largeur="768">768</button>
+        <button type="button" class="bouton bouton--petit" data-largeur="375">375</button>
+        <button type="button" class="bouton bouton--petit" id="btn-recharger">Recharger</button>
+      </div>
+    </div>
+    <div class="apercu" id="apercu-cadre">
+      <iframe id="apercu" title="Aperçu de la page en cours de modification"></iframe>
+    </div>
+  </section>
+
+  <!-- ============ Colonne de droite : inspecteur ============ -->
+  <section class="panneau panneau--inspecteur" aria-label="Bloc sélectionné">
+    <div class="panneau__tete">
+      <h2 id="inspecteur-titre">Réglages de la page</h2>
+    </div>
+    <div class="inspecteur" id="inspecteur"></div>
+  </section>
+
+</main>
+
+<p class="message" id="message" role="status" aria-live="polite"></p>
+
+<!-- ============ Fenêtres ============ -->
+<dialog class="fenetre" id="fenetre">
+  <form method="dialog" class="fenetre__forme" id="fenetre-forme">
+    <h2 class="fenetre__titre" id="fenetre-titre">Titre</h2>
+    <div class="fenetre__corps" id="fenetre-corps"></div>
+    <div class="fenetre__pied">
+      <button type="button" class="bouton" id="fenetre-annuler">Annuler</button>
+      <button type="button" class="bouton bouton--primaire" id="fenetre-valider">Valider</button>
+    </div>
+  </form>
+</dialog>
+
+</body>
+</html>

@@ -20,3 +20,6 @@ npm-debug.log*
 *.log
 *.tmp
 /scratch/
+
+# Sauvegardes créées par l'interface d'administration (node admin.mjs)
+/.admin-sauvegardes/
