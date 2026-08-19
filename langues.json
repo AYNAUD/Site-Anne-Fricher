@@ -1,0 +1,23 @@
+{
+  "_lisezmoi": "Source unique des langues du site. Après toute modification de ce fichier, lancer : node outils/langues.mjs synchroniser",
+  "domaine": "https://www.atelierannefricher.fr/",
+  "defaut": "fr",
+  "langues": [
+    {
+      "code": "fr",
+      "dossier": "",
+      "etiquette": "FR",
+      "nom": "Français",
+      "locale": "fr_FR",
+      "selecteur": "Langue du site"
+    },
+    {
+      "code": "en",
+      "dossier": "en/",
+      "etiquette": "EN",
+      "nom": "English",
+      "locale": "en_GB",
+      "selecteur": "Site language"
+    }
+  ]
+}

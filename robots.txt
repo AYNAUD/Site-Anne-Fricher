@@ -1,6 +1,9 @@
 User-agent: *
 Allow: /
+# ===== PAGES EXCLUES (généré par outils/langues.mjs) =====
 Disallow: /mentions-legales.html
+Disallow: /en/mentions-legales.html
+# ===== /PAGES EXCLUES =====
 Disallow: /admin/
 
 Sitemap: https://www.atelierannefricher.fr/sitemap.xml

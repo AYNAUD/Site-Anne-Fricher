@@ -12,7 +12,6 @@ import {
   nettoyerAttribut, echapperAttribut
 } from "./html.mjs";
 
-const echapperRegex = (texte) => String(texte).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 import { titreDe, metaDe } from "./document.mjs";
 import { modele } from "./blocs.mjs";
 import { dimensions } from "./images.mjs";
@@ -20,36 +19,72 @@ import { dimensions } from "./images.mjs";
 /** Page dont on recopie l'en-tête et le pied de page. */
 const REFERENCE = "portfolio.html";
 
+/** Repère du sélecteur de langue dans l'en-tête (cf. outils/langues.mjs). */
+const MARQUEUR_LANGUES = "<!-- ===== SÉLECTEUR DE LANGUE ===== -->";
+
 /* ------------------------------------------------------------------ *
    Inventaire
+
+   Le site est multilingue (cf. CLAUDE.md §14) : la langue par défaut est à
+   la racine, les autres dans un sous-dossier (`en/`, `es/`…) déclaré par
+   `langues.json`. Une page est donc désignée par son chemin relatif à la
+   racine du site — « services.html » ou « en/services.html ».
  * ------------------------------------------------------------------ */
+async function languesDuSite(racine) {
+  try {
+    const manifeste = JSON.parse(await readFile(join(racine, "langues.json"), "utf8"));
+    return manifeste.langues.map((l) => ({
+      code: l.code,
+      dossier: l.dossier || "",
+      etiquette: l.etiquette || l.code.toUpperCase(),
+      defaut: l.code === manifeste.defaut
+    }));
+  } catch {
+    return [{ code: "fr", dossier: "", etiquette: "FR", defaut: true }];
+  }
+}
+
+async function pagesDuDossier(racine, dossier) {
+  const entrees = await readdir(join(racine, dossier), { withFileTypes: true }).catch(() => []);
+  return entrees
+    .filter((e) => e.isFile() && e.name.endsWith(".html"))
+    .map((e) => e.name);
+}
+
 export async function listerPages(racine) {
-  const entrees = await readdir(racine, { withFileTypes: true });
+  const langues = await languesDuSite(racine);
   const pages = [];
 
-  for (const entree of entrees) {
-    if (!entree.isFile() || !entree.name.endsWith(".html")) continue;
-    const chemin = join(racine, entree.name);
-    const src = await readFile(chemin, "utf8");
-    const info = await stat(chemin).catch(() => null);
-    const meta = metaDe(src);
-    pages.push({
-      fichier: entree.name,
-      titre: titreDe(src) || entree.name,
-      titreOnglet: meta.titre,
-      description: meta.description,
-      dansLeMenu: estDansLeMenu(src, entree.name),
-      modifie: info ? info.mtimeMs : 0
-    });
+  for (const langue of langues) {
+    for (const nom of await pagesDuDossier(racine, langue.dossier)) {
+      const relatif = langue.dossier + nom;
+      const chemin = join(racine, relatif);
+      const src = await readFile(chemin, "utf8");
+      const info = await stat(chemin).catch(() => null);
+      const meta = metaDe(src);
+      pages.push({
+        fichier: relatif,
+        langue: langue.code,
+        etiquetteLangue: langue.etiquette,
+        titre: (titreDe(src) || nom) + (langue.defaut ? "" : ` [${langue.etiquette}]`),
+        titreOnglet: meta.titre,
+        description: meta.description,
+        dansLeMenu: estDansLeMenu(src, nom),
+        modifie: info ? info.mtimeMs : 0
+      });
+    }
   }
 
+  const rangLangue = (p) => langues.findIndex((l) => l.code === p.langue);
   const ordre = ["index.html", "services.html", "portfolio.html", "atelier.html", "contact.html"];
-  return pages.sort((a, b) => {
-    const ia = ordre.indexOf(a.fichier);
-    const ib = ordre.indexOf(b.fichier);
-    if (ia !== -1 || ib !== -1) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
-    return a.fichier.localeCompare(b.fichier, "fr");
-  });
+  const rangPage = (p) => {
+    const nom = p.fichier.slice(p.fichier.lastIndexOf("/") + 1);
+    return ordre.indexOf(nom) === -1 ? 99 : ordre.indexOf(nom);
+  };
+  return pages.sort((a, b) =>
+    rangLangue(a) - rangLangue(b) ||
+    rangPage(a) - rangPage(b) ||
+    a.fichier.localeCompare(b.fichier, "fr"));
 }
 
 function navPrincipale(doc) {
@@ -64,10 +99,25 @@ function navPiedDePage(doc) {
     !!trouver(n, (l) => l.nom === "a" && valeurAttribut(l, "href") === "index.html"));
 }
 
+/**
+ * Le sélecteur de langue vit lui aussi dans `nav#nav` et pointe vers la page
+ * courante dans chaque langue : ses liens ne sont pas des entrées de menu et
+ * doivent être ignorés partout où l'on cherche un lien de navigation.
+ */
+function dansLeSelecteurDeLangue(noeud) {
+  for (let n = noeud; n; n = n.parent) {
+    if (n.type === "element" && aClasse(n, "langues")) return true;
+  }
+  return false;
+}
+
+const lienDeMenu = (fichier) => (n) =>
+  n.nom === "a" && valeurAttribut(n, "href") === fichier && !dansLeSelecteurDeLangue(n);
+
 function estDansLeMenu(src, fichier) {
   const nav = navPrincipale(analyser(src));
   if (!nav) return false;
-  return !!trouver(nav, (n) => n.nom === "a" && valeurAttribut(n, "href") === fichier);
+  return !!trouver(nav, lienDeMenu(fichier));
 }
 
 /* ------------------------------------------------------------------ *
@@ -95,15 +145,20 @@ function ajouterAuMenuDansUneSource(src, fichier, libelle, pageCourante) {
 
   const nav = navPrincipale(doc);
   if (nav) {
-    const deja = trouver(nav, (n) => n.nom === "a" && valeurAttribut(n, "href") === fichier);
+    const deja = trouver(nav, lienDeMenu(fichier));
     if (!deja) {
-      const cta = trouver(nav, (n) => n.nom === "a" && aClasse(n, "header__cta"));
-      const ancre = cta || null;
       const courant = pageCourante ? ' aria-current="page"' : "";
       const lien = `<a class="nav__link" href="${echapperAttribut(fichier)}"${courant}>${libelle}</a>`;
-      if (ancre) {
-        const debutLigne = src.lastIndexOf("\n", ancre.debut - 1) + 1;
-        const indentation = src.slice(debutLigne, ancre.debut);
+
+      // Le nouveau lien se glisse après le dernier lien de menu, donc avant le
+      // sélecteur de langue s'il existe, sinon avant le bouton d'appel.
+      const marqueur = src.indexOf(MARQUEUR_LANGUES, nav.debut);
+      const cta = trouver(nav, (n) => n.nom === "a" && aClasse(n, "header__cta"));
+      const ancre = marqueur !== -1 && marqueur < nav.fin ? marqueur : (cta ? cta.debut : -1);
+
+      if (ancre !== -1) {
+        const debutLigne = src.lastIndexOf("\n", ancre - 1) + 1;
+        const indentation = src.slice(debutLigne, ancre);
         decoupes.push({ debut: debutLigne, fin: debutLigne, texte: `${indentation}${lien}\n` });
       } else {
         decoupes.push({ debut: nav.finInterieur, fin: nav.finInterieur, texte: `  ${lien}\n    ` });
@@ -137,7 +192,7 @@ function retirerDuMenuDansUneSource(src, fichier) {
 
   for (const conteneur of [navPrincipale(doc), navPiedDePage(doc)]) {
     if (!conteneur) continue;
-    const lien = trouver(conteneur, (n) => n.nom === "a" && valeurAttribut(n, "href") === fichier);
+    const lien = trouver(conteneur, lienDeMenu(fichier));
     if (!lien) continue;
     // On retire l'élément de liste entier dans le pied de page
     const cible = lien.parent && lien.parent.nom === "li" ? lien.parent : lien;
@@ -151,21 +206,35 @@ function retirerDuMenuDansUneSource(src, fichier) {
   return appliquer(src, decoupes);
 }
 
-/** Ajoute (ou retire) une page du menu de toutes les pages du site. */
+/**
+ * Ajoute (ou retire) une page du menu de toutes les pages du site.
+ *
+ * Les liens du menu sont relatifs au dossier de la page : `services.html`
+ * désigne la version française à la racine et la version anglaise dans
+ * `en/`. On ne touche donc au menu d'une langue que si la page existe
+ * bel et bien dans cette langue — sans quoi le menu anglais pointerait
+ * vers un fichier absent.
+ */
 export async function synchroniserMenu(racine, fichier, libelle, present, ecrire) {
-  const entrees = await readdir(racine, { withFileTypes: true });
+  const langues = await languesDuSite(racine);
+  const dossier = fichier.includes("/") ? fichier.slice(0, fichier.lastIndexOf("/") + 1) : "";
+  const nom = fichier.slice(dossier.length);
   const touchees = [];
 
-  for (const entree of entrees) {
-    if (!entree.isFile() || !entree.name.endsWith(".html")) continue;
-    const chemin = join(racine, entree.name);
-    const src = await readFile(chemin, "utf8");
-    const sortie = present
-      ? ajouterAuMenuDansUneSource(src, fichier, libelle, entree.name === fichier)
-      : retirerDuMenuDansUneSource(src, fichier);
-    if (sortie !== src) {
-      await ecrire(entree.name, sortie);
-      touchees.push(entree.name);
+  for (const langue of langues) {
+    const pages = await pagesDuDossier(racine, langue.dossier);
+    if (present && !pages.includes(nom)) continue;
+
+    for (const page of pages) {
+      const relatif = langue.dossier + page;
+      const src = await readFile(join(racine, relatif), "utf8");
+      const sortie = present
+        ? ajouterAuMenuDansUneSource(src, nom, libelle, relatif === fichier)
+        : retirerDuMenuDansUneSource(src, nom);
+      if (sortie !== src) {
+        await ecrire(relatif, sortie);
+        touchees.push(relatif);
+      }
     }
   }
 
@@ -173,35 +242,23 @@ export async function synchroniserMenu(racine, fichier, libelle, present, ecrire
 }
 
 /* ------------------------------------------------------------------ *
-   Plan du site
+   Langues : sélecteur, hreflang, plan du site, robots.txt
+
+   Tout cela est dérivé de `langues.json` et de l'inventaire réel des
+   fichiers : plutôt que de rafistoler `sitemap.xml` page par page, on
+   relance la synchronisation complète (cf. outils/langues.mjs). Elle est
+   idempotente, ce qui la rend sûre après une création de page comme après
+   une annulation.
  * ------------------------------------------------------------------ */
-export async function majSitemap(racine, fichier, present, ecrire) {
-  const chemin = join(racine, "sitemap.xml");
-  let src;
+export async function synchroniserLangues() {
   try {
-    src = await readFile(chemin, "utf8");
-  } catch {
+    const { synchroniser } = await import("../../outils/langues.mjs");
+    await synchroniser();
+    return true;
+  } catch (err) {
+    console.warn("⚠ Synchronisation des langues impossible : " + err.message);
     return false;
   }
-
-  const base = (/<loc>(https?:\/\/[^<]*?\/)[^<\/]*<\/loc>/.exec(src) || [])[1] ||
-    "https://www.atelierannefricher.fr/";
-  const url = base + fichier;
-
-  if (present) {
-    if (src.indexOf(`<loc>${url}</loc>`) !== -1) return false;
-    const bloc = `  <url>\n    <loc>${url}</loc>\n    <changefreq>yearly</changefreq>\n    <priority>0.7</priority>\n  </url>\n`;
-    const position = src.lastIndexOf("</urlset>");
-    if (position === -1) return false;
-    await ecrire("sitemap.xml", src.slice(0, position) + bloc + src.slice(position));
-    return true;
-  }
-
-  const motif = new RegExp("\\s*<url>\\s*<loc>" + echapperRegex(url) + "</loc>[\\s\\S]*?</url>", "g");
-  const sortie = src.replace(motif, "");
-  if (sortie === src) return false;
-  await ecrire("sitemap.xml", sortie);
-  return true;
 }
 
 /* ------------------------------------------------------------------ *

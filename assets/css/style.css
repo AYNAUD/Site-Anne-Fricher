@@ -339,6 +339,37 @@ hr {
 .burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
 .burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
+/* Sélecteur de langue — le contenu du bloc est régénéré par
+   `node outils/langues.mjs synchroniser` à partir de langues.json. */
+.langues {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+.langues__lien {
+  font-size: var(--t-xs);
+  font-weight: 400;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--c-ink-faint);
+  text-decoration: none;
+  padding: 0.3rem 0.5rem;
+  border-radius: var(--radius);
+  transition: color 0.25s var(--ease), background 0.25s var(--ease);
+}
+.langues__lien:hover { color: var(--c-ink); }
+.langues__lien[aria-current] {
+  color: var(--c-ink);
+  font-weight: 500;
+  background: var(--c-bg-alt);
+}
+.header--over .langues__lien { color: rgba(255, 255, 255, 0.72); }
+.header--over .langues__lien:hover { color: #fff; }
+.header--over .langues__lien[aria-current] {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.18);
+}
+
 /* ------------------------------------------------------------------ *
    5. Boutons
  * ------------------------------------------------------------------ */
@@ -1143,6 +1174,8 @@ hr {
   .nav.is-open { transform: none; }
   .nav__link { font-family: var(--f-display); font-size: 1.7rem; }
   .nav__link::after { display: none; }
+  .nav .langues { margin-top: var(--sp-1); }
+  .nav .langues__lien { font-size: var(--t-sm); padding: 0.4rem 0.8rem; }
   .nav .header__cta {
     display: inline-flex;
     margin-top: var(--sp-2);
@@ -1157,6 +1190,11 @@ hr {
   .nav-open .header--over .burger,
   .nav-open .header--over .nav__link,
   .nav-open .header--over .header__cta { color: var(--c-ink); }
+  .nav-open .header--over .langues__lien { color: var(--c-ink-faint); }
+  .nav-open .header--over .langues__lien[aria-current] {
+    color: var(--c-ink);
+    background: var(--c-bg-alt);
+  }
   .nav-open .header--over .brand__logo--sombre { opacity: 1; }
   .nav-open .header--over .brand__logo--clair { opacity: 0; }
 

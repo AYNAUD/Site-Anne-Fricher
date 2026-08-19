@@ -14,6 +14,9 @@ retravaillée. Le contenu textuel et les photographies proviennent du site Wix.
 Le site Wix reste la source des contenus d'origine, mais **ce dépôt est désormais
 la référence** : ne pas re-synchroniser depuis Wix sans demande explicite.
 
+Le site est **bilingue français / anglais**, et prêt à accueillir d'autres
+langues : voir §14. Le français est la langue par défaut, à la racine.
+
 ## 2. Pile technique
 
 **HTML / CSS / JavaScript statiques. Aucune dépendance, aucune étape de build.**
@@ -41,7 +44,10 @@ demande explicitement. Le site doit rester ouvrable en double-cliquant sur
 ├── atelier.html                    Page « L'atelier » (nouvelle, absente du site Wix)
 ├── contact.html                    Coordonnées, carte, formulaire
 ├── mentions-legales.html           ⚠️ contient des champs [à compléter]
-├── robots.txt · sitemap.xml
+├── en/                             Version anglaise, mêmes noms de fichiers (§14)
+├── langues.json                    Langues du site — source unique (§14)
+├── outils/langues.mjs              Sélecteur, hreflang, sitemap, robots (§14)
+├── robots.txt · sitemap.xml        ⚠️ régénérés par outils/langues.mjs
 ├── serve.mjs                       Serveur statique local, sans dépendance
 ├── admin.mjs                       Serveur d'administration local (voir §13)
 ├── admin/                          Interface d'administration — jamais mise en ligne
@@ -86,9 +92,15 @@ Pour modifier le contenu sans écrire de code, voir §13 : `node admin.mjs`, pui
 ## 5. Conventions à respecter
 
 ### Langue
-**Tout est en français** : contenu, commentaires du code, noms de classes
-métier, messages de commit. Utiliser les apostrophes typographiques (`'`) dans
-le contenu visible et les espaces insécables avant `?` `!` `:` `;` (`&nbsp;`).
+**Le code reste en français** : commentaires, noms de variables, noms de classes
+métier, messages de commit — quelle que soit la langue de la page produite.
+
+**Le contenu suit la langue de la page.** Les règles typographiques françaises
+(apostrophes typographiques `'`, espaces insécables avant `?` `!` `:` `;` en
+`&nbsp;`) ne valent que pour les pages françaises : **ne pas les reporter dans
+`en/`**, où l'on écrit `A question about our services?` sans espace.
+
+L'anglais du site est de l'**anglais britannique** (`og:locale` `en_GB`).
 
 ### CSS
 - Nommage **BEM** : `.bloc`, `.bloc__element`, `.bloc--modificateur`.
@@ -102,10 +114,12 @@ le contenu visible et les espaces insécables avant `?` `!` `:` `;` (`&nbsp;`).
 ### HTML
 - L'en-tête et le pied de page sont **dupliqués dans chaque page** (pas de
   templating). **Toute modification de l'un doit être répercutée dans les 8
-  pages.** Vérifier ensuite avec :
+  pages de chaque langue** — 16 fichiers aujourd'hui. Vérifier ensuite avec :
   ```bash
-  grep -c "footer__grid" *.html
+  grep -c "footer__grid" *.html en/*.html
   ```
+  Seules exceptions : le sélecteur de langue et les liens `hreflang`, régénérés
+  par `node outils/langues.mjs synchroniser` (§14).
 - Marquer la page courante avec `aria-current="page"` sur le bon `.nav__link`.
 - Chaque page : un seul `<h1>`, un `<title>` unique, une `meta description`,
   les balises Open Graph, et un lien `canonical`.
@@ -150,9 +164,10 @@ photo** avant d'écrire son `alt` et son `data-caption`.
 
 | Élément | Fichier | À faire |
 |---|---|---|
-| Mentions légales | `mentions-legales.html` | Renseigner SIRET, forme juridique, TVA, hébergeur. Champs entre `[crochets]`. |
-| Domaine | toutes les pages | Les `canonical`, `robots.txt` et `sitemap.xml` pointent vers `https://www.atelierannefricher.fr/` — valeur supposée, à remplacer par le domaine réel. |
-| Formulaire de contact | `contact.html`, `main.js` | Fonctionne actuellement en `mailto:` (voir §8). |
+| Mentions légales | `mentions-legales.html`, `en/mentions-legales.html` | Renseigner SIRET, forme juridique, TVA, hébergeur. Champs entre `[crochets]` — dans les deux langues. |
+| Domaine | `langues.json` | Les `canonical`, `hreflang`, `robots.txt` et `sitemap.xml` dérivent tous du champ `domaine` : y corriger `https://www.atelierannefricher.fr/` — valeur supposée — puis lancer `node outils/langues.mjs synchroniser` (§14). |
+| Traduction à relire | `en/` | Les huit pages anglaises sont une traduction de la version française, à faire relire par un anglophone ou par Anne Fricher (vocabulaire métier : *soft furnishings*, *wave heading*, *Roman blind*…). |
+| Formulaire de contact | `contact.html`, `en/contact.html`, `main.js` | Fonctionne actuellement en `mailto:` (voir §8). |
 | Année de création | toutes les pages | Le bandeau affiche « Nîmes · depuis 2003 », déduit du « plus de 20 ans d'expérience » du site Wix. **À confirmer auprès d'Anne Fricher.** |
 | Horaires d'ouverture | `contact.html` | Absents du site Wix. Mention actuelle : « reçoit sur rendez-vous ». À préciser si des horaires existent. |
 | Favicon | `assets/img/favicon.svg` | Toujours le monogramme « AF » terracotta, antérieur au logo. Le logo étant un bloc-marque horizontal, il ne se réduit pas à un carré : demander une déclinaison carrée. |
@@ -207,11 +222,14 @@ mentions et, potentiellement, d'ajouter une bannière de consentement.
 ## 11. Contrôles avant livraison
 
 ```bash
+node outils/langues.mjs verifier
 node serve.mjs
 ```
 
-- Aucun style en ligne : `grep -c 'style="' *.html` doit renvoyer `0` partout.
-- En-tête et pied de page identiques sur les 8 pages.
+- Aucun style en ligne : `grep -c 'style="' *.html en/*.html` doit renvoyer `0` partout.
+- En-tête et pied de page identiques sur les 8 pages de chaque langue.
+- Sélecteur de langue : la bascule FR/EN ramène bien à la même page, en bureau
+  comme en mobile.
 - Rendu vérifié à 375 px (mobile), 768 px (tablette) et 1280 px (bureau).
 - Menu mobile : ouverture, fermeture par Échap, fermeture au clic sur un lien.
 - Visionneuse : flèches, Échap, balayage tactile, focus rendu à la vignette.
@@ -222,18 +240,21 @@ node serve.mjs
 ```
 Atelier Anne Fricher
 2 rue Villars, 30000 Nîmes, France
-06 74 39 85 93
+06 74 39 85 93          (affiché +33 6 74 39 85 93 sur les pages anglaises)
 atelierannefricher@outlook.fr
 facebook.com/AtelierFricher · instagram.com/anne_fri
 ```
 
-Ces valeurs apparaissent dans le pied de page des 8 pages, dans l'en-tête, sur la
-page Contact et dans le JSON-LD de `index.html`. **En cas de modification, les
-mettre à jour partout** :
+Ces valeurs apparaissent dans le pied de page de chaque page, dans l'en-tête, sur
+la page Contact et dans le JSON-LD des deux pages d'accueil. **En cas de
+modification, les mettre à jour partout** :
 
 ```bash
-grep -rn "0674398593\|atelierannefricher@outlook.fr\|rue Villars" *.html
+grep -rn "0674398593\|74 39 85 93\|atelierannefricher@outlook.fr\|rue Villars" *.html en/*.html
 ```
+
+Le `href` du téléphone est identique partout (`tel:+33674398593`) ; seul le texte
+affiché change d'une langue à l'autre (§14).
 
 ---
 
@@ -326,10 +347,182 @@ sélectionner un bloc. Si l'un des deux calculs change, l'autre doit changer aus
 ### Limites assumées
 
 - Pas de suppression de page ni de renommage : à faire à la main (et à
-  répercuter dans le menu, `sitemap.xml` et les liens internes).
+  répercuter dans le menu, les autres langues, `sitemap.xml` et les liens
+  internes), puis lancer `node outils/langues.mjs synchroniser`.
 - Pas de suppression de fichier image : l'administration retire une image d'une
   page, jamais du dossier `assets/img/`.
 - Le formulaire de contact, le JSON-LD et les mentions légales ne sont pas
   modifiables ici : ils se modifient dans les fichiers.
 - Un seul utilisateur à la fois : deux onglets ouverts sur la même page peuvent
   écrire l'un sur l'autre.
+- Les pages de toutes les langues sont éditables, mais **une page ne peut être
+  créée qu'en langue par défaut** : voir §14 pour la marche à suivre.
+
+---
+
+## 14. Site multilingue
+
+Le site existe en **français** (langue par défaut) et en **anglais**, et
+l'architecture est prévue pour en accueillir d'autres.
+
+### Où vivent les langues
+
+```
+/                     français — inchangé, à la racine
+  index.html · services.html · portfolio.html · …
+/en/                  anglais — mêmes noms de fichiers
+  index.html · services.html · portfolio.html · …
+/xx/                  toute langue future, créée par l'outil (§ ci-dessous)
+assets/               partagé par toutes les langues
+```
+
+**Les noms de fichiers sont identiques dans toutes les langues** — `en/` contient
+bien `projet-coussinage.html` et non `project-cushions.html`. C'est un choix
+délibéré : le passage d'une langue à l'autre, les liens `hreflang` et le plan du
+site deviennent une simple substitution de préfixe, et ajouter une langue reste
+une opération mécanique. Traduire les noms de fichiers casserait cette
+correspondance ; ne le faire que si le référencement l'impose vraiment, et alors
+prévoir une table de correspondance dans `langues.json`.
+
+Le français reste à la racine : les adresses existantes, `serve.mjs`, l'ouverture
+en `file://` et l'administration continuent de fonctionner sans rien changer.
+
+### `langues.json` — la source unique
+
+```json
+{
+  "domaine": "https://www.atelierannefricher.fr/",
+  "defaut": "fr",
+  "langues": [
+    { "code": "fr", "dossier": "",    "etiquette": "FR", "nom": "Français",
+      "locale": "fr_FR", "selecteur": "Langue du site" },
+    { "code": "en", "dossier": "en/", "etiquette": "EN", "nom": "English",
+      "locale": "en_GB", "selecteur": "Site language" }
+  ]
+}
+```
+
+`selecteur` est le libellé accessible du groupe de liens, dans la langue
+concernée. `etiquette` est ce qui s'affiche dans l'en-tête (`FR`, `EN`).
+
+### L'outil `outils/langues.mjs`
+
+```bash
+node outils/langues.mjs verifier       # contrôle la cohérence, ne modifie rien
+node outils/langues.mjs synchroniser   # régénère tout ce qui est dérivé
+node outils/langues.mjs ajouter es "Español" ES es_ES "Idioma del sitio"
+```
+
+Comme `admin.mjs`, cet outil **écrit directement dans les fichiers `.html`** :
+ce n'est pas une étape de build, les fichiers restent la source de vérité et la
+§2 est intacte.
+
+`synchroniser` régénère, à partir de `langues.json` et de l'inventaire réel des
+fichiers :
+
+- le **sélecteur de langue** de l'en-tête, entre
+  `<!-- ===== SÉLECTEUR DE LANGUE ===== -->` et son marqueur de fermeture ;
+- les liens **`rel="alternate" hreflang`** du `<head>`, entre
+  `<!-- ===== ALTERNATIVES DE LANGUE ===== -->` et son marqueur ;
+- **`sitemap.xml`** en entier, avec les `<xhtml:link>` d'alternance ;
+- le bloc d'exclusions de **`robots.txt`** (pages en `noindex`).
+
+Si les marqueurs sont absents d'une page, l'outil les pose : la tête après le
+`<link rel="canonical">`, le sélecteur juste avant le `<a class="header__cta">`.
+Une page créée par l'administration est donc réparée toute seule.
+
+Deux règles importantes, appliquées automatiquement :
+
+- une page **non traduite** n'apparaît ni en `hreflang` ni dans `sitemap.xml` —
+  cela produirait des 404 pour les moteurs ;
+- dans le **sélecteur**, en revanche, la langue reste toujours proposée : si la
+  page n'existe pas dans cette langue, le lien mène à son accueil.
+
+### Ajouter une langue
+
+```bash
+node outils/langues.mjs ajouter es "Español" ES es_ES "Idioma del sitio"
+```
+
+La commande crée `es/` en recopiant les pages françaises, corrige `<html lang>`,
+les chemins `assets/` (`../assets/…`), le `canonical` et `og:locale`, inscrit la
+langue dans `langues.json`, puis synchronise tout le site. Restent à faire :
+
+1. **traduire** le contenu de `es/` — les pages sont encore en français ;
+2. ajouter les libellés `es` dans `TEXTES`, en tête de `assets/js/main.js` ;
+3. relire `<title>`, `meta description` et `og:description` de chaque page.
+
+### Retirer une langue
+
+Il n'y a pas de commande dédiée, mais trois gestes suffisent :
+
+```bash
+rm -r es/                              # 1. supprimer le dossier
+                                       # 2. retirer son entrée de langues.json
+node outils/langues.mjs synchroniser   # 3. resynchroniser
+```
+
+La synchronisation nettoie les sélecteurs, les `hreflang`, `sitemap.xml` et
+`robots.txt` de toutes les pages restantes.
+
+### Textes construits en JavaScript
+
+`assets/js/main.js` fabrique quelques libellés (menu, visionneuse, message du
+formulaire, corps de l'e-mail). Ils sont regroupés dans l'objet `TEXTES` en tête
+du fichier et choisis d'après `<html lang>`. **Toute nouvelle chaîne écrite en
+JavaScript doit passer par `t("clé")`**, jamais être écrite en dur.
+
+### Le sélecteur de langue vit dans `nav#nav`
+
+Il est placé entre le dernier `.nav__link` et le `.header__cta`, à l'intérieur du
+menu — il descend donc naturellement dans le panneau mobile. Conséquence pour le
+code qui analyse le menu (`admin/lib/pages.mjs`) : ses liens **ne sont pas des
+entrées de menu** et sont écartés par `dansLeSelecteurDeLangue()`. Toute nouvelle
+lecture du menu doit faire de même.
+
+Styles : `.langues` / `.langues__lien`, §4 de `style.css`, avec les variantes
+`.header--over` (au-dessus du hero) et `.nav-open .header--over` (menu mobile
+ouvert par-dessus le hero).
+
+### Ce que l'administration sait faire, et pas
+
+`node admin.mjs` liste et modifie les pages **de toutes les langues** — elles
+apparaissent avec leur étiquette (`[EN]`) et se désignent par leur chemin,
+`en/services.html`. Après une création de page, un changement de menu ou une
+annulation, le serveur relance `synchroniser()` tout seul.
+
+En revanche :
+
+- **la création de page reste en langue par défaut** (à la racine). Pour la
+  version anglaise, copier le fichier dans `en/`, traduire, puis lancer
+  `node outils/langues.mjs synchroniser`.
+- l'ajout au menu ne touche que les langues où la page existe déjà — c'est
+  voulu : le menu anglais pointerait sinon vers un fichier absent. Relancer
+  `synchroniser` (ou rebasculer l'interrupteur du menu) une fois la traduction
+  faite.
+
+### Numéro de téléphone
+
+Les pages anglaises affichent le numéro au format international
+(`+33 6 74 39 85 93`) ; les pages françaises gardent `06 74 39 85 93`. Le `href`
+est le même partout : `tel:+33674398593`. En cherchant les coordonnées (§12),
+penser aux deux formes.
+
+### Mentions légales
+
+Les mentions légales sont une obligation de droit français : la version
+française fait foi. `en/mentions-legales.html` porte donc un encadré qui le dit
+et renvoie vers elle. Les deux versions sont en `noindex` et exclues de
+`robots.txt`.
+
+### Contrôles
+
+À ajouter à la liste de la §11 :
+
+```bash
+node outils/langues.mjs verifier
+```
+
+Cette commande vérifie que chaque langue possède toutes les pages, que
+`<html lang>`, `canonical` et `og:locale` sont corrects, et que les blocs
+régénérés sont à jour.

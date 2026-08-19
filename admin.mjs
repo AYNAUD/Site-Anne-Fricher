@@ -24,7 +24,7 @@ import { fileURLToPath } from "node:url";
 import { arbreDe, modifierBloc, deplacerBloc, supprimerBloc, dupliquerBloc, ajouterBloc, modifierMeta } from "./admin/lib/document.mjs";
 import { MODELES } from "./admin/lib/blocs.mjs";
 import { listerMedias, enregistrerImage } from "./admin/lib/images.mjs";
-import { listerPages, creerPage, synchroniserMenu, majSitemap, modelesDePage } from "./admin/lib/pages.mjs";
+import { listerPages, creerPage, synchroniserMenu, synchroniserLangues, modelesDePage } from "./admin/lib/pages.mjs";
 import { transaction, annuler, historique } from "./admin/lib/sauvegardes.mjs";
 
 const RACINE = fileURLToPath(new URL(".", import.meta.url)).replace(/[/\\]$/, "");
@@ -89,9 +89,14 @@ function lireCorps(req) {
   });
 }
 
-/** Vérifie qu'un nom de page désigne bien une page du site. */
+/**
+ * Vérifie qu'un nom de page désigne bien une page du site.
+ * Le site est multilingue (cf. CLAUDE.md §14) : une page se trouve soit à la
+ * racine (« services.html »), soit dans un dossier de langue
+ * (« en/services.html »).
+ */
 async function pageValide(fichier) {
-  if (!/^[A-Za-z0-9_-]+\.html$/.test(String(fichier || ""))) {
+  if (!/^(?:[a-z]{2}(?:-[a-z]{2})?\/)?[A-Za-z0-9_-]+\.html$/.test(String(fichier || ""))) {
     throw new Error("Nom de page invalide.");
   }
   const chemin = join(RACINE, fichier);
@@ -222,8 +227,8 @@ async function api(req, res, url) {
       if (corps.menu !== false) {
         await synchroniserMenu(RACINE, fichier, libelle, true, (nom, texte) => tr.ecrire(nom, texte));
       }
-      await majSitemap(RACINE, fichier, true, (nom, texte) => tr.ecrire(nom, texte));
       await tr.valider({ page: fichier });
+      await synchroniserLangues();
 
       return repondreJson(res, 200, {
         fichier,
@@ -239,8 +244,8 @@ async function api(req, res, url) {
         RACINE, corps.fichier, corps.libelle || corps.fichier.replace(/\.html$/, ""),
         corps.present !== false, (nom, texte) => tr.ecrire(nom, texte)
       );
-      await majSitemap(RACINE, corps.fichier, corps.present !== false, (nom, texte) => tr.ecrire(nom, texte));
       await tr.valider({ page: corps.fichier });
+      await synchroniserLangues();
       return repondreJson(res, 200, { touchees, pages: await listerPages(RACINE) });
     }
 
@@ -253,6 +258,7 @@ async function api(req, res, url) {
     /* ---------------- Annulation ---------------- */
     case "POST annuler": {
       const entree = await annuler(RACINE);
+      await synchroniserLangues();
       return repondreJson(res, 200, {
         annule: entree.libelle,
         pages: await listerPages(RACINE),

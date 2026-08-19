@@ -8,6 +8,54 @@
   var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ------------------------------------------------------------------ *
+     Libellés des éléments construits en JavaScript
+     La langue est lue sur <html lang="…">. Pour ajouter une langue,
+     ajouter une entrée ici — voir langues.json et CLAUDE.md §14.
+   * ------------------------------------------------------------------ */
+  var LANGUE_DEFAUT = "fr";
+
+  var TEXTES = {
+    fr: {
+      menuOuvrir:      "Ouvrir le menu",
+      menuFermer:      "Fermer le menu",
+      visionneuse:     "Visionneuse d'images",
+      fermer:          "Fermer",
+      imagePrecedente: "Image précédente",
+      imageSuivante:   "Image suivante",
+      courrielBonjour: "Bonjour,",
+      courrielEmail:   "E-mail : ",
+      courrielTel:     "Téléphone : ",
+      courrielObjet:   "[Site] ",
+      objetDefaut:     "Demande de renseignements",
+      formEnvoi:       "Votre logiciel de messagerie va s'ouvrir avec le message prérempli. " +
+                       "S'il ne s'ouvre pas, écrivez directement à "
+    },
+    en: {
+      menuOuvrir:      "Open the menu",
+      menuFermer:      "Close the menu",
+      visionneuse:     "Image viewer",
+      fermer:          "Close",
+      imagePrecedente: "Previous image",
+      imageSuivante:   "Next image",
+      courrielBonjour: "Hello,",
+      courrielEmail:   "Email: ",
+      courrielTel:     "Telephone: ",
+      courrielObjet:   "[Website] ",
+      objetDefaut:     "General enquiry",
+      formEnvoi:       "Your email application will open with the message ready to send. " +
+                       "If nothing happens, write directly to "
+    }
+  };
+
+  var langue = (document.documentElement.getAttribute("lang") || LANGUE_DEFAUT)
+    .slice(0, 2).toLowerCase();
+
+  function t(cle) {
+    var table = TEXTES[langue] || TEXTES[LANGUE_DEFAUT];
+    return table[cle] !== undefined ? table[cle] : TEXTES[LANGUE_DEFAUT][cle];
+  }
+
+  /* ------------------------------------------------------------------ *
      Menu mobile
    * ------------------------------------------------------------------ */
   function initNav() {
@@ -22,7 +70,7 @@
       // Sert à repasser l'en-tête en mode opaque tant que le menu est ouvert,
       // même lorsqu'il est en surimpression sur le hero.
       document.documentElement.classList.toggle("nav-open", open);
-      burger.setAttribute("aria-label", open ? "Fermer le menu" : "Ouvrir le menu");
+      burger.setAttribute("aria-label", open ? t("menuFermer") : t("menuOuvrir"));
     }
 
     burger.addEventListener("click", function () {
@@ -116,13 +164,13 @@
     box.className = "lightbox";
     box.setAttribute("role", "dialog");
     box.setAttribute("aria-modal", "true");
-    box.setAttribute("aria-label", "Visionneuse d'images");
+    box.setAttribute("aria-label", t("visionneuse"));
     box.innerHTML =
-      '<button class="lightbox__btn lightbox__btn--close" type="button" aria-label="Fermer">' +
+      '<button class="lightbox__btn lightbox__btn--close" type="button" aria-label="' + t("fermer") + '">' +
       '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M1 1l16 16M17 1L1 17" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>' +
-      '<button class="lightbox__btn lightbox__btn--prev" type="button" aria-label="Image précédente">' +
+      '<button class="lightbox__btn lightbox__btn--prev" type="button" aria-label="' + t("imagePrecedente") + '">' +
       '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M12 1L4 9l8 8" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>' +
-      '<button class="lightbox__btn lightbox__btn--next" type="button" aria-label="Image suivante">' +
+      '<button class="lightbox__btn lightbox__btn--next" type="button" aria-label="' + t("imageSuivante") + '">' +
       '<svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M6 1l8 8-8 8" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>' +
       '<figure class="lightbox__figure"><img alt=""><figcaption class="lightbox__caption"></figcaption></figure>';
     document.body.appendChild(box);
@@ -241,27 +289,26 @@
       var nom = (data.get("nom") || "").trim();
       var email = (data.get("email") || "").trim();
       var tel = (data.get("telephone") || "").trim();
-      var objet = (data.get("objet") || "Demande de renseignements").trim();
+      var objet = (data.get("objet") || t("objetDefaut")).trim();
       var message = (data.get("message") || "").trim();
 
       var corps = [
-        "Bonjour,",
+        t("courrielBonjour"),
         "",
         message,
         "",
         "—",
         prenom + " " + nom,
-        email ? "E-mail : " + email : "",
-        tel ? "Téléphone : " + tel : ""
+        email ? t("courrielEmail") + email : "",
+        tel ? t("courrielTel") + tel : ""
       ].filter(Boolean).join("\n");
 
       var href = "mailto:" + form.dataset.mailto +
-        "?subject=" + encodeURIComponent("[Site] " + objet) +
+        "?subject=" + encodeURIComponent(t("courrielObjet") + objet) +
         "&body=" + encodeURIComponent(corps);
 
       window.location.href = href;
-      say("Votre logiciel de messagerie va s'ouvrir avec le message prérempli. " +
-          "S'il ne s'ouvre pas, écrivez directement à " + form.dataset.mailto + ".", "ok");
+      say(t("formEnvoi") + form.dataset.mailto + ".", "ok");
     });
   }
 
