@@ -57,6 +57,11 @@
   var survole = null;
   var choisi = null;
 
+  function envoyer(donnees) {
+    donnees.source = "apercu";
+    window.parent.postMessage(donnees, "*");
+  }
+
   function nommer(element) {
     var balise = element.tagName.toLowerCase();
     var classe = (element.getAttribute("class") || "").split(/\s+/)[0];
@@ -103,14 +108,79 @@
 
   document.addEventListener("mouseleave", function () { survoler(null); });
 
-  /* En mode aperçu, un clic sélectionne au lieu de naviguer. */
+  /* ---------------------------------------------------------------- *
+     Clics — la page ne doit jamais quitter le mode aperçu
+
+     Un clic hors de <main> déclenchait jusqu'ici le comportement normal du
+     site : suivre un lien du menu ou du pied de page (la page atteinte n'a
+     alors plus `?apercu=1`, donc plus de script de sélection : l'aperçu
+     devient inéditable), ouvrir le menu mobile ou la visionneuse (leur
+     panneau, en `position: fixed`, recouvre le contenu et absorbe tous les
+     clics suivants). Dans les deux cas il fallait recharger.
+
+     On intercepte donc *tous* les clics : ceux qui portent sur un bloc le
+     sélectionnent, ceux qui portent sur un lien de page demandent à
+     l'administration d'ouvrir cette page, les autres ne font rien.
+   * ---------------------------------------------------------------- */
+
+  /** Page du site désignée par un lien, ou null (lien externe, tel:, mailto:). */
+  function pageDuLien(lien) {
+    var url = urlDuLien(lien);
+    if (!url) return null;
+    var fichier = decodeURIComponent(url.pathname).replace(/^\//, "");
+    if (fichier === "" || /\/$/.test(fichier)) fichier += "index.html";
+    return /\.html$/.test(fichier) ? fichier : null;
+  }
+
+  function urlDuLien(lien) {
+    var url;
+    try { url = new URL(lien.href, location.href); } catch (err) { return null; }
+    return url.origin === location.origin ? url : null;
+  }
+
+  /** Zone de la page où le clic est tombé, pour l'explication affichée. */
+  function zoneDe(element) {
+    if (!element || !element.closest) return null;
+    if (element.closest(".lightbox")) return "visionneuse";
+    if (element.closest("header")) return "entete";
+    if (element.closest("footer")) return "pied";
+    return null;
+  }
+
   document.addEventListener("click", function (e) {
     var cible = cibleDe(e.target);
-    if (!cible) return;
     e.preventDefault();
     e.stopPropagation();
-    marquer(cible);
-    window.parent.postMessage({ source: "apercu", type: "selection", chemin: cheminDe(cible) }, "*");
+
+    if (cible) {
+      marquer(cible);
+      envoyer({ type: "selection", chemin: cheminDe(cible) });
+      return;
+    }
+
+    var lien = e.target.closest ? e.target.closest("a[href]") : null;
+    if (lien) {
+      var url = urlDuLien(lien);
+      /* Ancre interne : on se contente de faire défiler jusqu'à la cible. */
+      if (url && url.hash && url.pathname === location.pathname) {
+        var ancre = document.getElementById(url.hash.slice(1));
+        if (ancre) ancre.scrollIntoView({ block: "start", behavior: "smooth" });
+        return;
+      }
+      var page = pageDuLien(lien);
+      if (page) {
+        envoyer({ type: "naviguer", fichier: page });
+        return;
+      }
+    }
+
+    envoyer({ type: "hors-contenu", zone: zoneDe(e.target) });
+  }, true);
+
+  /* Le formulaire de contact compose un `mailto:` : il quitterait l'aperçu. */
+  document.addEventListener("submit", function (e) {
+    e.preventDefault();
+    e.stopPropagation();
   }, true);
 
   function marquer(element) {
@@ -153,5 +223,5 @@
     try { sessionStorage.setItem(cle, String(window.scrollY)); } catch (err) {}
   }, { passive: true });
 
-  window.parent.postMessage({ source: "apercu", type: "pret" }, "*");
+  envoyer({ type: "pret" });
 })();

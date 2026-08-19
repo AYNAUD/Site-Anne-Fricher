@@ -906,15 +906,62 @@
     if (!depuisApercu) versApercu({ type: "selectionner", chemin: chemin });
   }
 
+  function estUnePage(fichier) {
+    return etat.pages.filter(function (p) { return p.fichier === fichier; }).length > 0;
+  }
+
+  /** Un lien suivi dans l'aperçu ouvre la page correspondante dans l'éditeur. */
+  function ouvrirDepuisApercu(fichier) {
+    if (fichier === etat.fichier) { rechargerApercu(); return; }
+    if (!estUnePage(fichier)) {
+      message("La page " + fichier + " ne fait pas partie des pages modifiables.", "erreur");
+      rechargerApercu();
+      return;
+    }
+    ouvrirPage(fichier)
+      .then(function () { message("Page « " + fichier + " » ouverte.", "ok"); })
+      .catch(function (err) { message(err.message, "erreur"); });
+  }
+
+  var EXPLICATIONS = {
+    entete: "L'en-tête est commun à toutes les pages : il se modifie dans les fichiers.",
+    pied: "Le pied de page est commun à toutes les pages : il se modifie dans les fichiers.",
+    visionneuse: "La visionneuse d'images n'est pas modifiable depuis l'aperçu."
+  };
+
   window.addEventListener("message", function (e) {
     var donnees = e.data || {};
     if (donnees.source !== "apercu") return;
+
     if (donnees.type === "pret") {
       etat.apercuPret = true;
       if (etat.selection) versApercu({ type: "selectionner", chemin: etat.selection, defiler: false });
     }
     if (donnees.type === "selection") selectionner(donnees.chemin, true);
+    if (donnees.type === "naviguer") ouvrirDepuisApercu(donnees.fichier);
+    if (donnees.type === "hors-contenu" && EXPLICATIONS[donnees.zone]) {
+      message(EXPLICATIONS[donnees.zone], "info");
+    }
   });
+
+  /**
+   * Filet de sécurité : l'aperçu ne doit jamais quitter le mode `?apercu=1`,
+   * sans lequel le script de sélection n'est plus injecté et la page devient
+   * inéditable. `apercu.js` neutralise les liens, mais si une navigation
+   * passait malgré tout, on rouvre proprement la page atteinte.
+   */
+  function surChargementApercu() {
+    var cadre = $("#apercu");
+    var url;
+    try { url = new URL(cadre.contentWindow.location.href); } catch (err) { return; }
+    if (url.origin !== location.origin) return;          // about:blank au démarrage
+    if (url.searchParams.has("apercu")) return;          // aperçu normal
+
+    etat.apercuPret = false;
+    var fichier = decodeURIComponent(url.pathname).replace(/^\//, "");
+    if (fichier === "" || /\/$/.test(fichier)) fichier += "index.html";
+    ouvrirDepuisApercu(fichier);
+  }
 
   /* ---------------------------------------------------------------- *
      Démarrage
@@ -923,6 +970,8 @@
     $("#choix-page").addEventListener("change", function (e) {
       ouvrirPage(e.target.value).catch(function (err) { message(err.message, "erreur"); });
     });
+
+    $("#apercu").addEventListener("load", surChargementApercu);
 
     $("#btn-nouvelle-page").addEventListener("click", nouvellePage);
     $("#btn-annuler").addEventListener("click", annulerDerniere);

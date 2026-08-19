@@ -344,6 +344,17 @@ bloc par sa suite d'indices d'éléments depuis `<main>` (« 2.0.1.1 »), la mê
 celle calculée côté serveur : c'est ce qui permet de cliquer dans la page pour
 sélectionner un bloc. Si l'un des deux calculs change, l'autre doit changer aussi.
 
+**Tous les clics de l'aperçu sont interceptés**, pas seulement ceux qui tombent
+sur un bloc. C'est indispensable : un lien du menu ou du pied de page menait la
+page hors du mode `?apercu=1`, où le script n'est plus injecté — l'aperçu
+devenait inéditable jusqu'au rechargement ; et le menu mobile ou la visionneuse,
+en `position: fixed`, recouvraient le contenu et absorbaient les clics suivants.
+Un clic hors de `<main>` sur un lien de page demande donc à l'administration
+d'**ouvrir cette page** (le sélecteur de langue de l'aperçu bascule ainsi
+d'une langue à l'autre) ; les autres clics n'affichent qu'une explication.
+Un filet de sécurité côté `admin.js` (`surChargementApercu`) rattrape malgré
+tout une navigation qui passerait autrement.
+
 ### Limites assumées
 
 - Pas de suppression de page ni de renommage : à faire à la main (et à
