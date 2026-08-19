@@ -756,6 +756,7 @@ hr {
   justify-items: center;
 }
 .logos figure { margin: 0; text-align: center; }
+.logos__lien { display: block; }
 .logos img {
   height: clamp(56px, 8vw, 82px);
   width: auto;
@@ -765,7 +766,8 @@ hr {
   transition: filter 0.35s var(--ease), opacity 0.35s var(--ease);
   mix-blend-mode: multiply;
 }
-.logos figure:hover img { filter: grayscale(0); opacity: 1; }
+.logos figure:hover img,
+.logos__lien:focus-visible img { filter: grayscale(0); opacity: 1; }
 .logos figcaption {
   margin-top: 0.7rem;
   font-size: var(--t-xs);
