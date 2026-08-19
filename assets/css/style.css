@@ -313,6 +313,8 @@ hr {
   letter-spacing: 0.04em;
   color: var(--c-ink);
   text-decoration: none;
+  /* Le numéro de téléphone ne doit jamais se couper en deux lignes. */
+  white-space: nowrap;
   transition: background 0.25s var(--ease), color 0.25s var(--ease),
               border-color 0.25s var(--ease);
 }
@@ -1140,16 +1142,11 @@ hr {
 /* ------------------------------------------------------------------ *
    12. Responsive
  * ------------------------------------------------------------------ */
-@media (max-width: 960px) {
-  .split { grid-template-columns: 1fr; gap: var(--sp-4); }
-  .split--reverse .split__media { order: 0; }
-  .split__media::before { display: none; }
-  .contact-grid { grid-template-columns: 1fr; }
-  .footer__grid { grid-template-columns: 1fr 1fr; }
-}
-
-@media (max-width: 840px) {
-  :root { --header-h: 66px; --brand-logo-h: 42px; --footer-logo-h: 54px; }
+/* Le menu horizontal doit basculer sur le menu mobile avant d'être à
+   l'étroit : les libellés anglais sont plus larges que les français et le
+   numéro de téléphone de l'en-tête se coupait alors en deux lignes. */
+@media (max-width: 1024px) {
+  :root { --header-h: 66px; --brand-logo-h: 42px; }
 
   .burger { display: block; }
   .header__cta { display: none; }
@@ -1192,6 +1189,18 @@ hr {
   }
   .nav-open .header--over .brand__logo--sombre { opacity: 1; }
   .nav-open .header--over .brand__logo--clair { opacity: 0; }
+}
+
+@media (max-width: 960px) {
+  .split { grid-template-columns: 1fr; gap: var(--sp-4); }
+  .split--reverse .split__media { order: 0; }
+  .split__media::before { display: none; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .footer__grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 840px) {
+  :root { --footer-logo-h: 54px; }
 
   .hero { min-height: 88vh; align-items: center; text-align: left; }
   .form__row { grid-template-columns: 1fr; gap: 0; }
