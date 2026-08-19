@@ -537,3 +537,29 @@ node outils/langues.mjs verifier
 Cette commande vérifie que chaque langue possède toutes les pages, que
 `<html lang>`, `canonical` et `og:locale` sont corrects, et que les blocs
 régénérés sont à jour.
+
+---
+
+## 15. Publication automatique sur git
+
+**Toute modification demandée est commitée et poussée sur `origin main` sans
+attendre de confirmation**, sauf mention explicite du contraire dans la demande
+(« ne pousse pas », « laisse en local », etc.).
+
+Marche à suivre après chaque intervention :
+
+```bash
+git add -A
+git commit -m "Message en français, à l'impératif"
+git push origin main
+```
+
+- Les messages de commit restent **en français** (§5) et décrivent le
+  changement, pas la conversation.
+- On travaille directement sur `main` : pas de branche ni de pull request, sauf
+  demande contraire.
+- `origin` est le dépôt de référence (`AYNAUD/Site-Anne-Fricher`). Le distant
+  `upstream` n'est **pas** poussé automatiquement.
+- Les contrôles de la §11 valent toujours : pousser un site cassé n'est pas un
+  gain de temps. En cas d'échec d'un contrôle, le signaler plutôt que de pousser.
+- `.admin-sauvegardes/` est ignoré par git : `git add -A` ne l'emporte pas.
