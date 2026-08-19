@@ -557,13 +557,6 @@ hr {
   letter-spacing: 0.04em;
 }
 
-/* Variante encadrée, utilisée en tête des pages projet */
-.facts--boxed {
-  border: 1px solid var(--c-line);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
 /* Barre de navigation entre projets */
 .pager {
   display: flex;
