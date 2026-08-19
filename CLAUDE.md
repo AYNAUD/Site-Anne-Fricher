@@ -164,7 +164,7 @@ photo** avant d'écrire son `alt` et son `data-caption`.
 
 | Élément | Fichier | À faire |
 |---|---|---|
-| Mentions légales | `mentions-legales.html`, `en/mentions-legales.html` | Renseigner SIRET, forme juridique, TVA, hébergeur. Champs entre `[crochets]` — dans les deux langues. |
+| Mentions légales | `mentions-legales.html`, `en/mentions-legales.html` | SIRET, forme juridique et hébergeur renseignés dans les deux langues. Restent à trancher : entité et adresse postale exactes de l'hébergeur, numéro de TVA (ligne retirée), immatriculation au répertoire des métiers, assurance professionnelle, médiateur de la consommation. |
 | Domaine | `langues.json` | Les `canonical`, `hreflang`, `robots.txt` et `sitemap.xml` dérivent tous du champ `domaine` : y corriger `https://www.atelierannefricher.fr/` — valeur supposée — puis lancer `node outils/langues.mjs synchroniser` (§14). |
 | Traduction à relire | `en/` | Les huit pages anglaises sont une traduction de la version française, à faire relire par un anglophone ou par Anne Fricher (vocabulaire métier : *soft furnishings*, *wave heading*, *Roman blind*…). |
 | Formulaire de contact | `contact.html`, `en/contact.html`, `main.js` | Fonctionne actuellement en `mailto:` (voir §8). |
