@@ -14,6 +14,10 @@ retravaillée. Le contenu textuel et les photographies proviennent du site Wix.
 Le site Wix reste la source des contenus d'origine, mais **ce dépôt est désormais
 la référence** : ne pas re-synchroniser depuis Wix sans demande explicite.
 
+Le site est en ligne à <https://www.anne-fricher.com/>, hébergé sur Cloudflare.
+C'est le domaine renseigné dans `langues.json` (§14) et propagé au `canonical`,
+aux `hreflang`, à `sitemap.xml`, `robots.txt` et au JSON-LD.
+
 Le site est **bilingue français / anglais**, et prêt à accueillir d'autres
 langues : voir §14. Le français est la langue par défaut, à la racine.
 
@@ -165,7 +169,6 @@ photo** avant d'écrire son `alt` et son `data-caption`.
 | Élément | Fichier | À faire |
 |---|---|---|
 | Mentions légales | `mentions-legales.html`, `en/mentions-legales.html` | SIRET, forme juridique et hébergeur renseignés dans les deux langues. Restent à trancher : entité et adresse postale exactes de l'hébergeur, numéro de TVA (ligne retirée), immatriculation au répertoire des métiers, assurance professionnelle, médiateur de la consommation. |
-| Domaine | `langues.json` | Les `canonical`, `hreflang`, `robots.txt` et `sitemap.xml` dérivent tous du champ `domaine` : y corriger `https://www.atelierannefricher.fr/` — valeur supposée — puis lancer `node outils/langues.mjs synchroniser` (§14). |
 | Traduction à relire | `en/` | Les huit pages anglaises sont une traduction de la version française, à faire relire par un anglophone ou par Anne Fricher (vocabulaire métier : *soft furnishings*, *wave heading*, *Roman blind*…). |
 | Formulaire de contact | `contact.html`, `en/contact.html`, `main.js` | Fonctionne actuellement en `mailto:` (voir §8). |
 | Année de création | toutes les pages | Le bandeau affiche « Nîmes · depuis 2003 », déduit du « plus de 20 ans d'expérience » du site Wix. **À confirmer auprès d'Anne Fricher.** |
@@ -402,7 +405,7 @@ en `file://` et l'administration continuent de fonctionner sans rien changer.
 
 ```json
 {
-  "domaine": "https://www.atelierannefricher.fr/",
+  "domaine": "https://www.anne-fricher.com/",
   "defaut": "fr",
   "langues": [
     { "code": "fr", "dossier": "",    "etiquette": "FR", "nom": "Français",

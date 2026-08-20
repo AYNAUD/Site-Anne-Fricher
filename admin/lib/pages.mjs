@@ -342,7 +342,7 @@ export async function creerPage(racine, options) {
   const canonique = trouver(doc, (n) => n.nom === "link" && valeurAttribut(n, "rel") === "canonical");
   const base = canonique
     ? valeurAttribut(canonique, "href").replace(/[^/]*$/, "")
-    : "https://www.atelierannefricher.fr/";
+    : "https://www.anne-fricher.com/";
 
   const ogImage = trouver(doc, (n) => n.nom === "meta" && valeurAttribut(n, "property") === "og:image");
   const image = options.image || (ogImage ? valeurAttribut(ogImage, "content") : "assets/img/realisations/r08.jpeg");

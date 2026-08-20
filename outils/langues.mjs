@@ -16,6 +16,7 @@
 import { readFile, writeFile, readdir, mkdir, stat } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
+import { execFileSync } from "node:child_process";
 
 const RACINE = fileURLToPath(new URL("..", import.meta.url));
 
@@ -216,6 +217,17 @@ function synchroniserPage(manifeste, langue, fichier, texte, disponibles) {
   return nav;
 }
 
+/** Date (AAAA-MM-JJ) du dernier commit touchant le fichier, sinon aujourd'hui. */
+function dateDeDerniereModification(chemin) {
+  try {
+    const sortie = execFileSync(
+      "git", ["log", "-1", "--format=%cs", "--", chemin],
+      { cwd: RACINE, encoding: "utf8" }).trim();
+    if (sortie) return sortie;
+  } catch { /* pas de dépôt git, ou fichier non suivi : on retombe sur aujourd'hui */ }
+  return new Date().toISOString().slice(0, 10);
+}
+
 /* ------------------------------------------------------------------ *
    Plan de site et robots.txt
  * ------------------------------------------------------------------ */
@@ -245,10 +257,12 @@ async function ecrireSitemap(manifeste, presence) {
         : []);
 
     for (const langue of disponibles) {
+      const lastmod = dateDeDerniereModification(langue.dossier + fichier);
       blocs.push([
         "  <url>",
         `    <loc>${adresse(manifeste, langue, fichier)}</loc>`,
         ...alternatives,
+        `    <lastmod>${lastmod}</lastmod>`,
         `    <changefreq>${frequence}</changefreq>`,
         `    <priority>${priorite}</priority>`,
         "  </url>"
