@@ -102,6 +102,10 @@ function lienRelatif(depuis, vers, fichier) {
 const echapper = (v) =>
   String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
 
+/** Échappement pour du texte XML (contenu d'élément, pas d'attribut). */
+const echapperTexte = (v) =>
+  String(v).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
 /* ------------------------------------------------------------------ *
    Inventaire des pages
  * ------------------------------------------------------------------ */
@@ -228,6 +232,33 @@ function dateDeDerniereModification(chemin) {
   return new Date().toISOString().slice(0, 10);
 }
 
+/**
+ * Repère les images de contenu d'une page (hors logos et icônes de marque,
+ * hors images purement décoratives dont l'alt est vide), pour les inclure
+ * dans le plan de site — favorise l'indexation par la recherche d'images.
+ */
+function extraireImages(manifeste, langue, texte) {
+  const prefixe = "../".repeat(profondeurDe(langue));
+  const vues = new Set();
+  const images = [];
+  const regexImg = /<img\b[^>]*\bsrc="([^"]+)"[^>]*>/g;
+  let correspondance;
+  while ((correspondance = regexImg.exec(texte))) {
+    const balise = correspondance[0];
+    const src = correspondance[1];
+    if (!src.startsWith("assets/img/") && !src.startsWith(prefixe + "assets/img/")) continue;
+    if (/\/(logo|logo-clair)\.png$/.test(src)) continue;
+    const relatif = prefixe && src.startsWith(prefixe) ? src.slice(prefixe.length) : src;
+    const loc = manifeste.domaine + relatif;
+    if (vues.has(loc)) continue;
+    const alt = (balise.match(/\balt="([^"]*)"/) || [, ""])[1];
+    if (!alt) continue; // décorative : pas de légende utile pour l'index d'images
+    vues.add(loc);
+    images.push({ loc, alt });
+  }
+  return images;
+}
+
 /* ------------------------------------------------------------------ *
    Plan de site et robots.txt
  * ------------------------------------------------------------------ */
@@ -235,8 +266,10 @@ function dateDeDerniereModification(chemin) {
  * @param {Map<string, object[]>} presence  fichier → langues où la page
  *        existe réellement et est indexable. Une page pas encore traduite
  *        ne doit apparaître ni en `<loc>` ni en alternative.
+ * @param {Map<string, object[]>} imagesParPage  "dossier/fichier" → images
+ *        de contenu de cette page, cf. extraireImages().
  */
-async function ecrireSitemap(manifeste, presence) {
+async function ecrireSitemap(manifeste, presence, imagesParPage) {
   const defaut = langueDefaut(manifeste);
   const blocs = [];
 
@@ -258,10 +291,17 @@ async function ecrireSitemap(manifeste, presence) {
 
     for (const langue of disponibles) {
       const lastmod = dateDeDerniereModification(langue.dossier + fichier);
+      const images = imagesParPage.get(langue.dossier + fichier) || [];
       blocs.push([
         "  <url>",
         `    <loc>${adresse(manifeste, langue, fichier)}</loc>`,
         ...alternatives,
+        ...images.map((img) => [
+          "    <image:image>",
+          `      <image:loc>${img.loc}</image:loc>`,
+          `      <image:caption>${echapperTexte(img.alt)}</image:caption>`,
+          "    </image:image>"
+        ].join("\n")),
         `    <lastmod>${lastmod}</lastmod>`,
         `    <changefreq>${frequence}</changefreq>`,
         `    <priority>${priorite}</priority>`,
@@ -274,7 +314,8 @@ async function ecrireSitemap(manifeste, presence) {
     '<?xml version="1.0" encoding="UTF-8"?>',
     "<!-- Généré par : node outils/langues.mjs synchroniser -->",
     '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
-    '        xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    '        xmlns:xhtml="http://www.w3.org/1999/xhtml"',
+    '        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">',
     ...blocs,
     "</urlset>",
     ""
@@ -312,6 +353,7 @@ export async function synchroniser() {
   const { parLangue, disponibles } = await inventaire(manifeste);
   const reference = parLangue.get(manifeste.defaut) || [];
   const presence = new Map();   // fichier → langues où la page est indexable
+  const imagesParPage = new Map(); // "dossier/fichier" → images de contenu
   const exclues = [];
   let touchees = 0;
 
@@ -337,6 +379,7 @@ export async function synchroniser() {
       } else {
         if (!presence.has(fichier)) presence.set(fichier, []);
         presence.get(fichier).push(langue);
+        imagesParPage.set(langue.dossier + fichier, extraireImages(manifeste, langue, sortie));
       }
     }
     const manquantes = reference.filter((p) => !pages.includes(p));
@@ -345,7 +388,7 @@ export async function synchroniser() {
     }
   }
 
-  await ecrireSitemap(manifeste, presence);
+  await ecrireSitemap(manifeste, presence, imagesParPage);
   await ecrireRobots(manifeste, exclues);
   console.log(`\n${touchees} page(s) mise(s) à jour · sitemap.xml et robots.txt régénérés.`);
 }

@@ -1,13 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Généré par : node outils/langues.mjs synchroniser -->
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://www.anne-fricher.com/</loc>
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r08.jpeg</image:loc>
+      <image:caption>Banquette d'extérieur habillée de coussins sur mesure dans une cour provençale en pierre, sous un olivier</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-1.jpg</image:loc>
+      <image:caption>Anne Fricher travaillant derrière sa machine à coudre dans son atelier</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r06-rideau.jpeg</image:loc>
+      <image:caption>Rideau blanc sur tringle en fer forgé dans une pièce ancienne ornée de stucs</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r04-fauteuil.jpeg</image:loc>
+      <image:caption>Fauteuil club regarni de velours brun, finition clous tapissiers</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-2.jpg</image:loc>
+      <image:caption>Anne Fricher à l'ouvrage dans son atelier de couture d'ameublement</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r02.jpeg</image:loc>
+      <image:caption>Salle de restaurant séparée par de grands rideaux gris à œillets</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r07.jpeg</image:loc>
+      <image:caption>Store bateau à rayures noires et grises, plis réguliers et chaînette</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r01.jpeg</image:loc>
+      <image:caption>Grand métrage de velours ocre en cours de couture sur la machine industrielle de l'atelier</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r03.jpeg</image:loc>
+      <image:caption>Fauteuil médaillon repeint en gris et regarni d'un tissu rayé rouge et blanc</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r05.jpeg</image:loc>
+      <image:caption>Pose d'un grand voilage blanc sur rail devant un mur en papier peint panoramique</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r09.jpg</image:loc>
+      <image:caption>Banquettes d'angle en bois clair habillées de galettes d'assise vertes et beiges</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/michel-kayser.jpg</image:loc>
+      <image:caption>Logo du restaurant Michel Kayser</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/table-uzes.png</image:loc>
+      <image:caption>Logo de La Table d'Uzès</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/chateau-montcaud.png</image:loc>
+      <image:caption>Logo du Château de Montcaud</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/vieux-castillon.png</image:loc>
+      <image:caption>Logo du Vieux Castillon</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -16,7 +77,67 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r08.jpeg</image:loc>
+      <image:caption>Outdoor bench dressed with made-to-measure cushions in a Provençal stone courtyard, under an olive tree</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-1.jpg</image:loc>
+      <image:caption>Anne Fricher working behind her sewing machine in her workshop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r06-rideau.jpeg</image:loc>
+      <image:caption>White curtain on a wrought-iron pole in a period room with stucco mouldings</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r04-fauteuil.jpeg</image:loc>
+      <image:caption>Club armchair re-covered in brown velvet with a studded finish</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-2.jpg</image:loc>
+      <image:caption>Anne Fricher at work in her soft furnishings workshop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r02.jpeg</image:loc>
+      <image:caption>Restaurant dining room divided by large grey eyelet curtains</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r07.jpeg</image:loc>
+      <image:caption>Roman blind in black and grey stripes, with even folds and a chain pull</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r01.jpeg</image:loc>
+      <image:caption>Long length of ochre velvet being sewn on the workshop's industrial machine</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r03.jpeg</image:loc>
+      <image:caption>Medallion chair repainted in grey and re-covered in a red and white striped fabric</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r05.jpeg</image:loc>
+      <image:caption>A large white sheer curtain being fitted on a track in front of a panoramic wallpaper</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r09.jpg</image:loc>
+      <image:caption>Corner benches in pale wood dressed with green and beige seat pads</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/michel-kayser.jpg</image:loc>
+      <image:caption>Logo of the Michel Kayser restaurant</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/table-uzes.png</image:loc>
+      <image:caption>Logo of La Table d'Uzès</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/chateau-montcaud.png</image:loc>
+      <image:caption>Logo of Château de Montcaud</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/vieux-castillon.png</image:loc>
+      <image:caption>Logo of Le Vieux Castillon</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -25,7 +146,35 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/services.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/services.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/services.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r06-rideau.jpeg</image:loc>
+      <image:caption>Rideau blanc sur tringle en fer forgé dans une pièce ancienne ornée de stucs</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r04-fauteuil.jpeg</image:loc>
+      <image:caption>Fauteuil club regarni de velours brun, finition clous tapissiers</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-2.jpg</image:loc>
+      <image:caption>Anne Fricher au travail dans son atelier de couture d'ameublement</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/michel-kayser.jpg</image:loc>
+      <image:caption>Logo du restaurant Michel Kayser</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/table-uzes.png</image:loc>
+      <image:caption>Logo de La Table d'Uzès</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/chateau-montcaud.png</image:loc>
+      <image:caption>Logo du Château de Montcaud</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/vieux-castillon.png</image:loc>
+      <image:caption>Logo du Vieux Castillon</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -34,7 +183,35 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/services.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/services.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/services.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r06-rideau.jpeg</image:loc>
+      <image:caption>White curtain on a wrought-iron pole in a period room with stucco mouldings</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r04-fauteuil.jpeg</image:loc>
+      <image:caption>Club armchair re-covered in brown velvet with a studded finish</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-2.jpg</image:loc>
+      <image:caption>Anne Fricher at work in her soft furnishings workshop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/michel-kayser.jpg</image:loc>
+      <image:caption>Logo of the Michel Kayser restaurant</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/table-uzes.png</image:loc>
+      <image:caption>Logo of La Table d'Uzès</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/chateau-montcaud.png</image:loc>
+      <image:caption>Logo of Château de Montcaud</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/vieux-castillon.png</image:loc>
+      <image:caption>Logo of Le Vieux Castillon</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -43,7 +220,51 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/portfolio.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c01.jpg</image:loc>
+      <image:caption>Salon d'extérieur en résine tressée garni de coussins bleus au bord d'une piscine</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v01.jpeg</image:loc>
+      <image:caption>Grand rideau de scène couleur safran installé sous une voûte en pierre</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r08.jpeg</image:loc>
+      <image:caption>Banquette d'extérieur et coussins colorés dans une cour en pierre</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r02.jpeg</image:loc>
+      <image:caption>Salle de restaurant séparée par de grands rideaux gris à œillets</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r07.jpeg</image:loc>
+      <image:caption>Store bateau à rayures noires et grises, plis réguliers et chaînette</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r06-rideau.jpeg</image:loc>
+      <image:caption>Rideau blanc sur tringle en fer forgé à anneaux, dans une pièce ancienne ornée de stucs</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r04-fauteuil.jpeg</image:loc>
+      <image:caption>Fauteuil club en bois clair regarni de velours brun, finition clous tapissiers</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r01.jpeg</image:loc>
+      <image:caption>Grand métrage de velours ocre en cours de couture sur la machine industrielle de l'atelier</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r03.jpeg</image:loc>
+      <image:caption>Fauteuil médaillon repeint en gris et regarni d'un tissu rayé rouge et blanc</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r05.jpeg</image:loc>
+      <image:caption>Pose d'un grand voilage blanc sur rail devant un mur en papier peint panoramique</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r09.jpg</image:loc>
+      <image:caption>Banquettes d'angle en bois clair habillées de galettes d'assise vertes et beiges</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -52,7 +273,51 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/portfolio.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/portfolio.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c01.jpg</image:loc>
+      <image:caption>Woven resin outdoor lounge set with blue cushions beside a swimming pool</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v01.jpeg</image:loc>
+      <image:caption>Large saffron-coloured stage curtain hung beneath a stone vault</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r08.jpeg</image:loc>
+      <image:caption>Outdoor bench and colourful cushions in a stone courtyard</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r02.jpeg</image:loc>
+      <image:caption>Restaurant dining room divided by large grey eyelet curtains</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r07.jpeg</image:loc>
+      <image:caption>Roman blind in black and grey stripes, with even folds and a chain pull</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r06-rideau.jpeg</image:loc>
+      <image:caption>White curtain on a wrought-iron ring pole, in a period room with stucco mouldings</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r04-fauteuil.jpeg</image:loc>
+      <image:caption>Club armchair in pale wood re-covered in brown velvet with a studded finish</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r01.jpeg</image:loc>
+      <image:caption>Long length of ochre velvet being sewn on the workshop's industrial machine</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r03.jpeg</image:loc>
+      <image:caption>Medallion chair repainted in grey and re-covered in a red and white striped fabric</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r05.jpeg</image:loc>
+      <image:caption>A large white sheer curtain being fitted on a track in front of a panoramic wallpaper</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/realisations/r09.jpg</image:loc>
+      <image:caption>Corner benches in pale wood dressed with green and beige seat pads</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -61,7 +326,7 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/contact.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/contact.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/contact.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -70,7 +335,7 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/contact.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/contact.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/contact.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -79,7 +344,31 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/atelier.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/atelier.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/atelier.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-1.jpg</image:loc>
+      <image:caption>Anne Fricher souriante, travaillant derrière sa machine à coudre</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-2.jpg</image:loc>
+      <image:caption>Anne Fricher à l'ouvrage dans son atelier de couture d'ameublement</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/michel-kayser.jpg</image:loc>
+      <image:caption>Logo du restaurant Michel Kayser</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/table-uzes.png</image:loc>
+      <image:caption>Logo de La Table d'Uzès</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/chateau-montcaud.png</image:loc>
+      <image:caption>Logo du Château de Montcaud</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/vieux-castillon.png</image:loc>
+      <image:caption>Logo du Vieux Castillon</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -88,7 +377,31 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/atelier.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/atelier.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/atelier.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-1.jpg</image:loc>
+      <image:caption>Anne Fricher smiling as she works behind her sewing machine</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/anne-atelier-2.jpg</image:loc>
+      <image:caption>Anne Fricher at work in her soft furnishings workshop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/michel-kayser.jpg</image:loc>
+      <image:caption>Logo of the Michel Kayser restaurant</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/table-uzes.png</image:loc>
+      <image:caption>Logo of La Table d'Uzès</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/chateau-montcaud.png</image:loc>
+      <image:caption>Logo of Château de Montcaud</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/logos/vieux-castillon.png</image:loc>
+      <image:caption>Logo of Le Vieux Castillon</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -97,7 +410,43 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/projet-coussinage.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/projet-coussinage.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/projet-coussinage.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c01.jpg</image:loc>
+      <image:caption>Salon d'extérieur en résine tressée garni de coussins bleus au bord d'une piscine</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c02.jpg</image:loc>
+      <image:caption>Assises et dossiers sur mesure d'un salon d'extérieur</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c03.jpg</image:loc>
+      <image:caption>Banquette d'extérieur habillée de coussins réalisés sur mesure</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c04.jpg</image:loc>
+      <image:caption>Coussins d'assise et de dossier aux finitions piquées</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c05.jpg</image:loc>
+      <image:caption>Ensemble de coussins coordonnés sur une terrasse</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c06.jpg</image:loc>
+      <image:caption>Détail de finition d'un coussin d'ameublement</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c07.jpg</image:loc>
+      <image:caption>Détail de couture sur un coussin sur mesure</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c08.jpg</image:loc>
+      <image:caption>Coussin décoratif assorti à l'ensemble</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c09.jpg</image:loc>
+      <image:caption>Ensemble de coussins photographié en situation</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -106,7 +455,43 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/projet-coussinage.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/projet-coussinage.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/projet-coussinage.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c01.jpg</image:loc>
+      <image:caption>Woven resin outdoor lounge set with blue cushions beside a swimming pool</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c02.jpg</image:loc>
+      <image:caption>Made-to-measure seats and backs on an outdoor lounge set</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c03.jpg</image:loc>
+      <image:caption>Outdoor bench dressed with cushions made to measure</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c04.jpg</image:loc>
+      <image:caption>Seat and back cushions with a topstitched finish</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c05.jpg</image:loc>
+      <image:caption>A set of coordinated cushions on a terrace</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c06.jpg</image:loc>
+      <image:caption>Finishing detail on a furnishing cushion</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c07.jpg</image:loc>
+      <image:caption>Stitching detail on a made-to-measure cushion</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c08.jpg</image:loc>
+      <image:caption>Scatter cushion matching the rest of the set</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/coussinage/c09.jpg</image:loc>
+      <image:caption>A set of cushions photographed in place</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -115,7 +500,63 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/projet-rideaux-voilages.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/projet-rideaux-voilages.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/projet-rideaux-voilages.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v01.jpeg</image:loc>
+      <image:caption>Grand rideau de scène couleur safran installé sous une voûte en pierre</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v02.jpeg</image:loc>
+      <image:caption>Salle de restaurant séparée par de grands rideaux gris à œillets</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v03.jpg</image:loc>
+      <image:caption>Rideau doublé dont le tombé a été réglé après la pose</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v04.jpg</image:loc>
+      <image:caption>Habillage de fenêtre réalisé sur mesure</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v05.jpg</image:loc>
+      <image:caption>Rideaux sur mesure photographiés en situation</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v06.jpg</image:loc>
+      <image:caption>Ensemble composé de rideaux et de voilages</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v07.jpg</image:loc>
+      <image:caption>Voilage léger au tombé fluide devant une fenêtre</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v08.jpg</image:loc>
+      <image:caption>Détail d'une tête de rideau confectionnée à l'atelier</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v09.jpg</image:loc>
+      <image:caption>Rideau sur mesure installé dans une pièce à vivre</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v10.jpg</image:loc>
+      <image:caption>Rideau de grande hauteur posé sur rail</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v11.jpg</image:loc>
+      <image:caption>Détail de finition d'un rideau</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v12.jpg</image:loc>
+      <image:caption>Rideaux doublés aux plis réguliers</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v13.jpg</image:loc>
+      <image:caption>Vue d'ensemble d'une pièce habillée de rideaux sur mesure</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v14.jpg</image:loc>
+      <image:caption>Rideaux et voilages coordonnés dans une même pièce</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -124,7 +565,63 @@
     <xhtml:link rel="alternate" hreflang="fr" href="https://www.anne-fricher.com/projet-rideaux-voilages.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://www.anne-fricher.com/en/projet-rideaux-voilages.html"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://www.anne-fricher.com/projet-rideaux-voilages.html"/>
-    <lastmod>2026-08-19</lastmod>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v01.jpeg</image:loc>
+      <image:caption>Large saffron-coloured stage curtain hung beneath a stone vault</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v02.jpeg</image:loc>
+      <image:caption>Restaurant dining room divided by large grey eyelet curtains</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v03.jpg</image:loc>
+      <image:caption>Lined curtain whose drape was adjusted after fitting</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v04.jpg</image:loc>
+      <image:caption>Window dressing made to measure</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v05.jpg</image:loc>
+      <image:caption>Made-to-measure curtains photographed in place</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v06.jpg</image:loc>
+      <image:caption>A scheme combining curtains and sheers</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v07.jpg</image:loc>
+      <image:caption>Light sheer curtain with a fluid drape in front of a window</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v08.jpg</image:loc>
+      <image:caption>Detail of a curtain heading made in the workshop</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v09.jpg</image:loc>
+      <image:caption>Made-to-measure curtain hung in a living room</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v10.jpg</image:loc>
+      <image:caption>Full-height curtain fitted on a track</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v11.jpg</image:loc>
+      <image:caption>Finishing detail on a curtain</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v12.jpg</image:loc>
+      <image:caption>Lined curtains with even pleats</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v13.jpg</image:loc>
+      <image:caption>General view of a room dressed with made-to-measure curtains</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://www.anne-fricher.com/assets/img/rideaux/v14.jpg</image:loc>
+      <image:caption>Coordinated curtains and sheers in a single room</image:caption>
+    </image:image>
+    <lastmod>2026-08-20</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.7</priority>
   </url>
