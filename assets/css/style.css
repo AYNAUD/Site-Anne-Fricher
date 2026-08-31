@@ -427,7 +427,7 @@ hr {
  * ------------------------------------------------------------------ */
 .hero {
   position: relative;
-  min-height: min(92vh, 860px);
+  min-height: 100vh;
   display: flex;
   align-items: flex-end;
   padding-block: calc(var(--header-h) + 3rem) clamp(4.5rem, 10vw, 8rem);
