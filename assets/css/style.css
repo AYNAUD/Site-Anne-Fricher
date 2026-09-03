@@ -1202,7 +1202,7 @@ hr {
 @media (max-width: 840px) {
   :root { --footer-logo-h: 54px; }
 
-  .hero { min-height: 88vh; align-items: center; text-align: left; }
+  .hero { min-height: 100vh; align-items: center; text-align: left; }
   .form__row { grid-template-columns: 1fr; gap: 0; }
   .footer__grid { grid-template-columns: 1fr; }
   .footer__bottom { justify-content: flex-start; }
