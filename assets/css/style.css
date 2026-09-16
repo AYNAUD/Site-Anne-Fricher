@@ -576,6 +576,20 @@ hr {
   margin: var(--sp-3) 0;
 }
 
+/* Vidéo isolée en tête de page */
+.video-feature {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.video-feature__player {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  background: var(--c-bg-deep);
+}
+
 /* Ligne d'action centrée sous une section */
 .section-action { text-align: center; margin-top: clamp(2rem, 4vw, 3rem); }
 
