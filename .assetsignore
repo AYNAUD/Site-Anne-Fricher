@@ -1,0 +1,22 @@
+# Fichiers exclus du déploiement Cloudflare Workers (assets statiques).
+# Le déploiement publie tout le dossier racine du dépôt : ce fichier liste
+# ce qui ne doit jamais être servi publiquement (§13 de CLAUDE.md), plus
+# les outils et l'historique qui n'ont rien à faire sur le site en ligne.
+# Même syntaxe que .gitignore.
+
+.git
+.gitattributes
+.gitignore
+.assetsignore
+.DS_Store
+.claude
+.admin-sauvegardes
+admin
+admin.mjs
+lancer-admin-mac.command
+lancer-admin.bat
+serve.mjs
+outils
+langues.json
+CLAUDE.md
+README.md
