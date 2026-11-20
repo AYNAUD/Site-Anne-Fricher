@@ -340,6 +340,23 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     }
   } catch (e) {
     console.error(`rapport-frequentation : ${e.message}`);
+    if (essai) await diagnostiquer({ zone: env.CF_ZONE_ID, jeton: env.CF_API_TOKEN });
     process.exit(1);
   }
+}
+
+/** En essai, si la lecture a échoué : les champs et limites que Cloudflare
+ *  accorde à la zone pour les deux jeux de requêtes HTTP (nœud settings). */
+async function diagnostiquer({ zone, jeton }) {
+  const reglages = "enabled maxDuration maxPageSize notOlderThan availableFields";
+  const r = await fetch(API, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${jeton}`, "Content-Type": "application/json", "User-Agent": "rapport-frequentation-anne-fricher" },
+    body: JSON.stringify({
+      query: `query($zone: string!) { viewer { zones(filter: { zoneTag: $zone }) { settings {
+        httpRequestsAdaptive { ${reglages} } httpRequestsAdaptiveGroups { ${reglages} } } } } }`,
+      variables: { zone },
+    }),
+  });
+  console.log(`\nDiagnostic : ${JSON.stringify(await r.json().catch(() => ({})), null, 1)}`);
 }
