@@ -40,7 +40,7 @@ const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", 
 export const ROBOTS = /bot\b|bot\/|crawl|spider|slurp|scrap|preview|facebookexternalhit|embedly|curl|wget|python|httpclient|okhttp|go-http|java\/|libwww|headless|phantom|lighthouse|pagespeed|monitor|uptime|pingdom|check|semrush|ahrefs|mj12|dotbot|petalbot|yandex|baidu|gptbot|claude|anthropic|bytespider|applebot|amazonbot|ccbot|seznam|qwantify|duckduckbot|bingbot|googlebot|feedfetcher|^$|^-$/i;
 const MOBILE = /mobi|android|iphone|ipad|ipod/i;
 const STATIQUE = /^\/(assets|admin)\/|\.(css|js|json|xml|txt|png|jpe?g|gif|webp|avif|svg|ico|woff2?|pdf|webmanifest|map|gz|zip)$/i;
-const INTROUVABLE_TECHNIQUE = /^\/(assets|img|wa_files)\/|favicon|apple-touch-icon|^\/(robots\.txt|sitemap\.xml|ads\.txt|security\.txt)$|\.(php|env|asp|aspx|cgi|bak|sql|css|js|map|png|jpe?g|gif|webp|svg|ico|woff2?)$|\/(wp-|xmlrpc|\.git|\.env|\.well-known|cgi-bin|_)|phpinfo|\/feed$|^\/$/i;
+const INTROUVABLE_TECHNIQUE = /^\/(assets|img|wa_files)\/|favicon|apple-touch-icon|^\/(robots\.txt|sitemap\.xml|ads\.txt|security\.txt)$|\.(php|env|asp|aspx|cgi|bak|sql|css|js|map|png|jpe?g|gif|webp|svg|ico|woff2?)$|\/(wp-|xmlrpc|cgi-bin|\.|_)|phpinfo|\/feed$|^\/$/i;
 
 /* ------------------------------------------------------------ Lecture */
 
