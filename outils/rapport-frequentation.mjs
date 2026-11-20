@@ -12,26 +12,26 @@
  * calcul puis oubliées : rien n'est conservé, ni adresse IP ni journal,
  * seulement le courriel de totaux.
  *
- * L'envoi passe par le Worker d'administration du site de Lecques
- * (route POST /rapport/frequentation, Brevo), qui n'écrit qu'à ses propres
- * destinataires (RAPPORT_DESTINATAIRES).
+ * L'envoi se fait par le serveur SMTP de Gmail, avec un mot de passe
+ * d'application Google (révocable sur myaccount.google.com/apppasswords).
  *
  * Un visiteur : une même adresse IP et un même navigateur dans la journée,
  * robots exclus.
  *
  * Variables : CF_ZONE_ID (identifiant de la zone anne-fricher.com),
  * CF_API_TOKEN (jeton Cloudflare « Zone · Analytics · Read » sur cette zone),
- * RAPPORT_CLE (clé partagée avec le Worker de Lecques) ; RAPPORT_WORKER_URL,
- * facultative. --essai : affiche le rapport sans l'envoyer.
+ * GMAIL_ADRESSE et GMAIL_MOT_DE_PASSE (mot de passe d'application) ;
+ * RAPPORT_DESTINATAIRE, facultative (par défaut GMAIL_ADRESSE).
+ * --essai : affiche le rapport sans l'envoyer.
  */
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
+import tls from "node:tls";
 
 const RACINE = fileURLToPath(new URL("..", import.meta.url));
 const SITE = "https://www.anne-fricher.com";
 const HOTES = new Set(["www.anne-fricher.com", "anne-fricher.com"]);
-const WORKER_PAR_DEFAUT = "https://admin.alombredutilleul.net/rapport/frequentation";
 const API = "https://api.cloudflare.com/client/v4/graphql";
 const LIMITE = 10000;
 const JOURS = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi"];
@@ -268,15 +268,76 @@ ${t.introuvables.length ? `<h2 style="font-size:16px;margin:20px 0 0">Pages intr
 
 /* ------------------------------------------------------------ Envoi */
 
-export async function envoyerParWorker({ url, cle, sujet, texte, html, lire = fetch }) {
-  const r = await lire(url, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${cle}`, "Content-Type": "application/json", "User-Agent": "rapport-frequentation-anne-fricher" },
-    body: JSON.stringify({ sujet, texte, html }),
+/** Message MIME texte + HTML. Les corps sont en base64 : aucune ligne ne peut
+ *  commencer par un point ni dépasser la longueur permise par SMTP. */
+export function composerMessage({ expediteur, destinataire, sujet, texte, html }) {
+  const b64 = (t) => Buffer.from(t, "utf8").toString("base64").replace(/.{76}/g, "$&\r\n");
+  const frontiere = `rapport-${Date.now().toString(36)}`;
+  return [
+    `From: Site Anne Fricher <${expediteur}>`,
+    `To: <${destinataire}>`,
+    `Subject: =?UTF-8?B?${Buffer.from(sujet, "utf8").toString("base64")}?=`,
+    `Date: ${new Date().toUTCString()}`,
+    `Message-ID: <${frontiere}@anne-fricher.com>`,
+    "MIME-Version: 1.0",
+    `Content-Type: multipart/alternative; boundary="${frontiere}"`,
+    "",
+    `--${frontiere}`,
+    "Content-Type: text/plain; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    b64(texte),
+    `--${frontiere}`,
+    "Content-Type: text/html; charset=UTF-8",
+    "Content-Transfer-Encoding: base64",
+    "",
+    b64(html),
+    `--${frontiere}--`,
+    "",
+  ].join("\r\n");
+}
+
+/** Envoi par le serveur SMTP de Gmail (port 465, TLS), authentifié par un
+ *  mot de passe d'application Google. « connecter » sert aux essais. */
+export async function envoyerParGmail({ adresse, motDePasse, destinataire, sujet, texte, html,
+  connecter = () => tls.connect({ host: "smtp.gmail.com", port: 465, servername: "smtp.gmail.com" }) }) {
+  const flux = connecter();
+  flux.setEncoding("utf8");
+  let tampon = "";
+  let enAttente = null;
+  const verifier = () => {
+    const fin = /(^|\r\n)(\d{3}) [^\r\n]*\r\n$/.exec(tampon);
+    if (!fin || !enAttente) return;
+    const reponse = tampon;
+    tampon = "";
+    const { resoudre } = enAttente;
+    enAttente = null;
+    resoudre({ code: Number(fin[2]), reponse });
+  };
+  flux.on("data", (morceau) => { tampon += morceau; verifier(); });
+  const echec = new Promise((_, rejeter) => {
+    flux.on("error", rejeter);
+    flux.on("close", () => rejeter(new Error("connexion SMTP fermée par Gmail")));
   });
-  const reponse = await r.json().catch(() => ({}));
-  if (!r.ok || !reponse.ok) throw new Error(`Le Worker n'a pas envoyé le rapport (${r.status}) : ${reponse.erreur || "réponse inattendue"}`);
-  return reponse;
+  const attendre = (attendu) => Promise.race([echec, new Promise((resoudre) => { enAttente = { resoudre }; verifier(); })])
+    .then(({ code, reponse }) => {
+      if (code !== attendu) throw new Error(`Gmail a répondu ${code} au lieu de ${attendu} : ${reponse.trim().split("\r\n").pop()}`);
+    });
+  const dire = (ligne, attendu) => { flux.write(`${ligne}\r\n`); return attendre(attendu); };
+  try {
+    await attendre(220);
+    await dire("EHLO anne-fricher.com", 250);
+    await dire("AUTH LOGIN", 334);
+    await dire(Buffer.from(adresse).toString("base64"), 334);
+    await dire(Buffer.from(motDePasse.replace(/\s+/g, "")).toString("base64"), 235);
+    await dire(`MAIL FROM:<${adresse}>`, 250);
+    await dire(`RCPT TO:<${destinataire}>`, 250);
+    await dire("DATA", 354);
+    await dire(`${composerMessage({ expediteur: adresse, destinataire, sujet, texte, html })}\r\n.`, 250);
+    await dire("QUIT", 221);
+  } finally {
+    flux.end();
+  }
 }
 
 /* ------------------------------------------------------------ Lancement */
@@ -286,7 +347,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const essai = args.includes("--essai");
   const jour = args.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a)) || hierAParis();
   const env = process.env;
-  const manque = ["CF_ZONE_ID", "CF_API_TOKEN", ...(essai ? [] : ["RAPPORT_CLE"])].filter((v) => !env[v]);
+  const manque = ["CF_ZONE_ID", "CF_API_TOKEN", ...(essai ? [] : ["GMAIL_ADRESSE", "GMAIL_MOT_DE_PASSE"])].filter((v) => !env[v]);
   if (manque.length) {
     console.error(`Réglages manquants : ${manque.join(", ")}.`);
     process.exit(2);
@@ -303,8 +364,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     if (essai) {
       console.log(`${rapport.sujet}\n\n${rapport.texte}`);
     } else {
-      const { envoyes } = await envoyerParWorker({ url: env.RAPPORT_WORKER_URL || WORKER_PAR_DEFAUT, cle: env.RAPPORT_CLE, ...rapport });
-      console.log(`Rapport du ${jour} envoyé à ${envoyes} adresse(s) : ${totaux.visiteurs} visiteurs, ${totaux.pagesVues} pages vues.`);
+      await envoyerParGmail({ adresse: env.GMAIL_ADRESSE, motDePasse: env.GMAIL_MOT_DE_PASSE, destinataire: env.RAPPORT_DESTINATAIRE || env.GMAIL_ADRESSE, ...rapport });
+      console.log(`Rapport du ${jour} envoyé : ${totaux.visiteurs} visiteurs, ${totaux.pagesVues} pages vues.`);
     }
   } catch (e) {
     console.error(`rapport-frequentation : ${e.message}`);
