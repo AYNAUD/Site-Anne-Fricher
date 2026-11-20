@@ -40,8 +40,6 @@ const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", 
 export const ROBOTS = /bot\b|bot\/|crawl|spider|slurp|scrap|preview|facebookexternalhit|embedly|curl|wget|python|httpclient|okhttp|go-http|java\/|libwww|headless|phantom|lighthouse|pagespeed|monitor|uptime|pingdom|check|semrush|ahrefs|mj12|dotbot|petalbot|yandex|baidu|gptbot|claude|anthropic|bytespider|applebot|amazonbot|ccbot|seznam|qwantify|duckduckbot|bingbot|googlebot|feedfetcher|^$|^-$/i;
 const MOBILE = /mobi|android|iphone|ipad|ipod/i;
 const STATIQUE = /^\/(assets|admin)\/|\.(css|js|json|xml|txt|png|jpe?g|gif|webp|avif|svg|ico|woff2?|pdf|webmanifest|map|gz|zip)$/i;
-const MOTEURS = /(^|\.)(google|bing|qwant|duckduckgo|ecosia|yahoo|lilo|startpage|brave|yandex|ask)\./i;
-const RESEAUX = /(^|\.)(facebook|fb|instagram|t\.co|x\.com|twitter|linkedin|whatsapp|messenger|youtube|tiktok|pinterest)\./i;
 const INTROUVABLE_TECHNIQUE = /^\/(assets|img|wa_files)\/|favicon|apple-touch-icon|^\/(robots\.txt|sitemap\.xml|ads\.txt|security\.txt)$|\.(php|env|asp|aspx|cgi|bak|sql|css|js|map|png|jpe?g|gif|webp|svg|ico|woff2?)$|\/(wp-|xmlrpc|\.git|\.env|\.well-known|cgi-bin|_)|phpinfo|\/feed$|^\/$/i;
 
 /* ------------------------------------------------------------ Lecture */
@@ -56,33 +54,23 @@ export function cheminPage(cible) {
   return p || "/";
 }
 
-/** Provenance d'une arrivée sur le site, d'après le site d'où l'on vient. */
-export function provenance(hoteReferent) {
-  const d = String(hoteReferent || "").replace(/^www\./, "").toLowerCase();
-  if (!d) return "direct";
-  if (d === "anne-fricher.com" || d.endsWith(".anne-fricher.com")) return "interne";
-  if (MOTEURS.test(`${d}.`) || MOTEURS.test(d)) return "moteur";
-  if (RESEAUX.test(`${d}.`) || RESEAUX.test(d)) return "reseau";
-  return "site";
-}
-
 /* ------------------------------------------------------------ Calcul */
 
 /** Totaux d'une journée à partir des requêtes renvoyées par Cloudflare
  *  ({ clientIP, clientRequestHTTPHost, clientRequestHTTPMethodName,
- *  clientRequestPath, clientRefererHost, userAgent, edgeResponseStatus }). */
+ *  clientRequestPath, userAgent, verifiedBotCategory, edgeResponseStatus }).
+ *  Un robot : un robot connu de Cloudflare, ou un navigateur de la liste ROBOTS. */
 export function analyserRequetes(requetes) {
   const visiteurs = new Map();
   const pages = new Map();
   const introuvables = new Map();
-  const sites = new Map();
   let pagesVues = 0;
   let robots = 0;
   for (const r of requetes) {
     const hote = String(r.clientRequestHTTPHost || "").toLowerCase();
     if (hote && !HOTES.has(hote)) continue;
     const navigateur = r.userAgent || "";
-    if (ROBOTS.test(navigateur)) { robots++; continue; }
+    if (r.verifiedBotCategory || ROBOTS.test(navigateur)) { robots++; continue; }
     if (r.clientRequestHTTPMethodName !== "GET") continue;
     const chemin = cheminPage(r.clientRequestPath);
     const statut = Number(r.edgeResponseStatus);
@@ -95,14 +83,7 @@ export function analyserRequetes(requetes) {
     pagesVues++;
     pages.set(chemin, (pages.get(chemin) || 0) + 1);
     const qui = `${r.clientIP}\u0000${navigateur}`;
-    if (!visiteurs.has(qui)) {
-      const v = { mobile: MOBILE.test(navigateur), arrivee: provenance(r.clientRefererHost) };
-      visiteurs.set(qui, v);
-      if (v.arrivee === "site" || v.arrivee === "reseau") {
-        const d = String(r.clientRefererHost).replace(/^www\./, "").toLowerCase();
-        sites.set(d, (sites.get(d) || 0) + 1);
-      }
-    }
+    if (!visiteurs.has(qui)) visiteurs.set(qui, { mobile: MOBILE.test(navigateur) });
   }
   const vus = [...visiteurs.values()];
   const tri = (m) => [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
@@ -112,15 +93,8 @@ export function analyserRequetes(requetes) {
     pagesVues,
     robots,
     mobiles: compter((v) => v.mobile),
-    arrivees: {
-      moteur: compter((v) => v.arrivee === "moteur"),
-      direct: compter((v) => v.arrivee === "direct" || v.arrivee === "interne"),
-      reseau: compter((v) => v.arrivee === "reseau"),
-      site: compter((v) => v.arrivee === "site"),
-    },
     pages: tri(pages).slice(0, 10),
     introuvables: tri(introuvables).slice(0, 5),
-    sites: tri(sites).slice(0, 3),
   };
 }
 
@@ -160,7 +134,7 @@ const REQUETE = `query Frequentation($zone: string!, $debut: Time!, $fin: Time!)
     httpRequestsAdaptive(limit: ${LIMITE}, orderBy: [datetime_ASC],
       filter: { datetime_geq: $debut, datetime_lt: $fin, requestSource: "eyeball" }) {
       datetime clientIP clientRequestHTTPHost clientRequestHTTPMethodName
-      clientRequestPath clientRefererHost userAgent edgeResponseStatus
+      clientRequestPath userAgent verifiedBotCategory edgeResponseStatus
     }
   } }
 }`;
@@ -180,24 +154,18 @@ async function interroger({ zone, jeton, debut, fin, lire }) {
   return zones[0].httpRequestsAdaptive || [];
 }
 
-/** Toutes les requêtes d'une journée (heure de Paris), par tranches de six
- *  heures — une journée de changement d'heure dure 25 h, et une requête
- *  GraphQL ne peut pas couvrir plus d'un jour — puis par pages de 10 000. */
+/** Toutes les requêtes d'une journée (heure de Paris : 23 ou 25 h les jours
+ *  de changement d'heure), par pages de 10 000. */
 export async function requetesDuJour(jour, { zone, jeton, lire = fetch }) {
-  const debutJour = minuitAParis(jour);
-  const finJour = minuitAParis(decaler(jour, 1));
+  let debut = minuitAParis(jour);
+  const fin = minuitAParis(decaler(jour, 1));
   const toutes = [];
-  for (let t = debutJour.getTime(); t < finJour.getTime(); t += 6 * 3600000) {
-    let debut = new Date(t);
-    const fin = new Date(Math.min(t + 6 * 3600000, finJour.getTime()));
-    for (;;) {
-      const lot = await interroger({ zone, jeton, debut, fin, lire });
-      toutes.push(...lot);
-      if (lot.length < LIMITE) break;
-      debut = new Date(Date.parse(lot[lot.length - 1].datetime) + 1000);
-    }
+  for (;;) {
+    const lot = await interroger({ zone, jeton, debut, fin, lire });
+    toutes.push(...lot);
+    if (lot.length < LIMITE) return toutes;
+    debut = new Date(Date.parse(lot[lot.length - 1].datetime) + 1000);
   }
-  return toutes;
 }
 
 /* ------------------------------------------------------------ Titres */
@@ -234,7 +202,7 @@ export function evolution(n, avant) {
   return e === 0 ? "=" : `${e > 0 ? "+" : "−"}${Math.abs(e)} %`;
 }
 
-const SOURCE = "Chiffres tirés des requêtes enregistrées par l'hébergeur (Cloudflare) : un visiteur est une même adresse et un même navigateur dans la journée. Aucune donnée personnelle n'est conservée. Détail : tableau de bord Cloudflare, anne-fricher.com, Analytics.";
+const SOURCE = "Chiffres tirés des requêtes enregistrées par l'hébergeur (Cloudflare) : un visiteur est une même adresse et un même navigateur dans la journée. Aucune donnée personnelle n'est conservée. La provenance des visiteurs (moteurs de recherche, réseaux sociaux…) n'est pas fournie par l'offre gratuite de Cloudflare. Détail : tableau de bord Cloudflare, anne-fricher.com, Analytics.";
 
 /** Sujet, texte et HTML du rapport d'une journée. « veille » et
  *  « semaineAvant » : les totaux de J-1 et J-7, ou null s'ils manquent. */
@@ -247,12 +215,6 @@ export function composerRapport({ jour, totaux, veille, semaineAvant, titres = n
     veille ? `veille : ${veille[cle]} (${evolution(t[cle], veille[cle])})` : "",
     semaineAvant ? `${jourSemaine} précédent : ${semaineAvant[cle]} (${evolution(t[cle], semaineAvant[cle])})` : "",
   ].filter(Boolean).join(" · ");
-  const arrivees = [
-    ["Moteurs de recherche", t.arrivees.moteur],
-    ["Accès direct, favori ou lien d'un courriel", t.arrivees.direct],
-    ["Autres sites", t.arrivees.site],
-    ["Réseaux sociaux", t.arrivees.reseau],
-  ];
   const sujet = `Atelier Anne Fricher · Fréquentation du ${quand} : ${t.visiteurs} visiteur${t.visiteurs > 1 ? "s" : ""}`;
   const note = `Robots et outils automatiques écartés : ${t.robots} requête${t.robots > 1 ? "s" : ""}.`;
 
@@ -262,10 +224,6 @@ export function composerRapport({ jour, totaux, veille, semaineAvant, titres = n
     `Visiteurs : ${t.visiteurs}${comparaison("visiteurs") ? ` (${comparaison("visiteurs")})` : ""}`,
     `Pages vues : ${t.pagesVues}${comparaison("pagesVues") ? ` (${comparaison("pagesVues")})` : ""}`,
     `Sur téléphone ou tablette : ${pourcent(t.mobiles, t.visiteurs)} · sur ordinateur : ${pourcent(t.visiteurs - t.mobiles, t.visiteurs)}`,
-    "",
-    "Arrivée sur le site :",
-    ...arrivees.map(([l, n]) => `  ${l} : ${n}`),
-    ...(t.sites.length ? [`  Sites et réseaux d'où l'on vient : ${t.sites.map(([d, n]) => `${d} (${n})`).join(", ")}`] : []),
     "",
     "Pages les plus consultées :",
     ...(t.pages.length ? t.pages.map(([c, n], i) => `  ${i + 1}. ${titre(c)} — ${n}`) : ["  aucune"]),
@@ -287,9 +245,6 @@ ${ligne("Visiteurs", t.visiteurs, comparaison("visiteurs"))}
 ${ligne("Pages vues", t.pagesVues, comparaison("pagesVues"))}
 ${ligne("Téléphone ou tablette", pourcent(t.mobiles, t.visiteurs), `ordinateur : ${pourcent(t.visiteurs - t.mobiles, t.visiteurs)}`)}
 </table>
-<h2 style="font-size:16px;margin:20px 0 0">Arrivée sur le site</h2>
-<ul style="margin:6px 0 0;padding-left:22px">${arrivees.map(([l, n]) => `<li>${esc(l)} : <strong>${n}</strong></li>`).join("")}</ul>
-${t.sites.length ? `<p style="margin:6px 0 0;color:#6b5a50;font-size:14px">Sites et réseaux d'où l'on vient : ${esc(t.sites.map(([d, n]) => `${d} (${n})`).join(", "))}</p>` : ""}
 <h2 style="font-size:16px;margin:20px 0 0">Pages les plus consultées</h2>
 ${t.pages.length ? liste(t.pages.map(([c, n]) => `<a href="${esc(SITE + c)}" style="color:#8c121a">${esc(titre(c))}</a> — ${n}`)) : '<p style="margin:6px 0 0">Aucune.</p>'}
 ${t.introuvables.length ? `<h2 style="font-size:16px;margin:20px 0 0">Pages introuvables demandées</h2><p style="margin:4px 0 0;color:#6b5a50;font-size:14px">Un lien cassé ou une ancienne adresse ?</p>${liste(t.introuvables.map(([c, n]) => `${esc(c)} — ${n}`))}` : ""}
