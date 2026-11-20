@@ -40,6 +40,7 @@ const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", 
 export const ROBOTS = /bot\b|bot\/|crawl|spider|slurp|scrap|preview|facebookexternalhit|embedly|curl|wget|python|httpclient|okhttp|go-http|java\/|libwww|headless|phantom|lighthouse|pagespeed|monitor|uptime|pingdom|check|semrush|ahrefs|mj12|dotbot|petalbot|yandex|baidu|gptbot|claude|anthropic|bytespider|applebot|amazonbot|ccbot|seznam|qwantify|duckduckbot|bingbot|googlebot|feedfetcher|^$|^-$/i;
 const MOBILE = /mobi|android|iphone|ipad|ipod/i;
 const STATIQUE = /^\/(assets|admin)\/|\.(css|js|json|xml|txt|png|jpe?g|gif|webp|avif|svg|ico|woff2?|pdf|webmanifest|map|gz|zip)$/i;
+const ERREURS_MAX_PAR_VISITEUR = 5;
 const INTROUVABLE_TECHNIQUE = /^\/(assets|img|wa_files)\/|favicon|apple-touch-icon|^\/(robots\.txt|sitemap\.xml|ads\.txt|security\.txt)$|\.(php|env|asp|aspx|cgi|bak|sql|css|js|map|png|jpe?g|gif|webp|svg|ico|woff2?)$|\/(wp-|xmlrpc|cgi-bin|\.|_)|phpinfo|\/feed$|^\/$/i;
 
 /* ------------------------------------------------------------ Lecture */
@@ -59,11 +60,15 @@ export function cheminPage(cible) {
 /** Totaux d'une journée à partir des requêtes renvoyées par Cloudflare
  *  ({ clientIP, clientRequestHTTPHost, clientRequestHTTPMethodName,
  *  clientRequestPath, userAgent, verifiedBotCategory, edgeResponseStatus }).
- *  Un robot : un robot connu de Cloudflare, ou un navigateur de la liste ROBOTS. */
+ *  Un robot : un robot connu de Cloudflare, ou un navigateur de la liste ROBOTS.
+ *  Une page introuvable : une adresse sans extension de fichier (ancien lien,
+ *  faute de frappe), demandée par quelqu'un qui fait moins de cinq erreurs dans
+ *  la journée ; au-delà, c'est un outil qui sonde le site à la recherche de
+ *  fichiers de configuration. */
 export function analyserRequetes(requetes) {
   const visiteurs = new Map();
   const pages = new Map();
-  const introuvables = new Map();
+  const erreurs = new Map();
   let pagesVues = 0;
   let robots = 0;
   for (const r of requetes) {
@@ -74,16 +79,24 @@ export function analyserRequetes(requetes) {
     if (r.clientRequestHTTPMethodName !== "GET") continue;
     const chemin = cheminPage(r.clientRequestPath);
     const statut = Number(r.edgeResponseStatus);
+    const qui = `${r.clientIP}\u0000${navigateur}`;
     if (statut === 404) {
-      if (!INTROUVABLE_TECHNIQUE.test(chemin)) introuvables.set(chemin, (introuvables.get(chemin) || 0) + 1);
+      erreurs.set(qui, [...(erreurs.get(qui) || []), chemin]);
       continue;
     }
     if (STATIQUE.test(chemin)) continue;
     if (statut !== 200 && statut !== 304) continue;
     pagesVues++;
     pages.set(chemin, (pages.get(chemin) || 0) + 1);
-    const qui = `${r.clientIP}\u0000${navigateur}`;
     if (!visiteurs.has(qui)) visiteurs.set(qui, { mobile: MOBILE.test(navigateur) });
+  }
+  const introuvables = new Map();
+  for (const chemins of erreurs.values()) {
+    if (chemins.length >= ERREURS_MAX_PAR_VISITEUR) continue;
+    for (const c of chemins) {
+      if (/\.[a-z0-9]+$/i.test(c) || INTROUVABLE_TECHNIQUE.test(c)) continue;
+      introuvables.set(c, (introuvables.get(c) || 0) + 1);
+    }
   }
   const vus = [...visiteurs.values()];
   const tri = (m) => [...m].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
