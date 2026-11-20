@@ -238,7 +238,8 @@ Rien n'est conservé hormis le courriel. Les mentions légales l'annoncent.
 Réglages GitHub : variable `CF_ZONE_ID`, secrets `CF_API_TOKEN` (lecture des
 analytics de la zone, Cloudflare offre gratuite), `GMAIL_ADRESSE` et
 `GMAIL_MOT_DE_PASSE` (mot de passe d'application, révocable sur
-myaccount.google.com/apppasswords) ; variable facultative `RAPPORT_DESTINATAIRE`. Essai sans
+myaccount.google.com/apppasswords) ; variable `RAPPORT_DESTINATAIRES` (adresses séparées par des virgules ;
+aujourd'hui aynaud@gmail.com et l'adresse de l'atelier). Essai sans
 envoi : `CF_ZONE_ID=… CF_API_TOKEN=… node outils/rapport-frequentation.mjs --essai`,
 ou « Run workflow » avec la case « essai » dans l'onglet Actions.
 

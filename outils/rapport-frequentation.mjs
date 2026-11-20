@@ -21,7 +21,8 @@
  * Variables : CF_ZONE_ID (identifiant de la zone anne-fricher.com),
  * CF_API_TOKEN (jeton Cloudflare « Zone · Analytics · Read » sur cette zone),
  * GMAIL_ADRESSE et GMAIL_MOT_DE_PASSE (mot de passe d'application) ;
- * RAPPORT_DESTINATAIRE, facultative (par défaut GMAIL_ADRESSE).
+ * RAPPORT_DESTINATAIRES, facultative : adresses séparées par des virgules
+ * (par défaut GMAIL_ADRESSE seule).
  * --essai : affiche le rapport sans l'envoyer.
  */
 import { readFileSync, readdirSync, existsSync } from "node:fs";
@@ -270,12 +271,12 @@ ${t.introuvables.length ? `<h2 style="font-size:16px;margin:20px 0 0">Pages intr
 
 /** Message MIME texte + HTML. Les corps sont en base64 : aucune ligne ne peut
  *  commencer par un point ni dépasser la longueur permise par SMTP. */
-export function composerMessage({ expediteur, destinataire, sujet, texte, html }) {
+export function composerMessage({ expediteur, destinataires, sujet, texte, html }) {
   const b64 = (t) => Buffer.from(t, "utf8").toString("base64").replace(/.{76}/g, "$&\r\n");
   const frontiere = `rapport-${Date.now().toString(36)}`;
   return [
     `From: Site Anne Fricher <${expediteur}>`,
-    `To: <${destinataire}>`,
+    `To: ${destinataires.map((d) => `<${d}>`).join(", ")}`,
     `Subject: =?UTF-8?B?${Buffer.from(sujet, "utf8").toString("base64")}?=`,
     `Date: ${new Date().toUTCString()}`,
     `Message-ID: <${frontiere}@anne-fricher.com>`,
@@ -299,7 +300,7 @@ export function composerMessage({ expediteur, destinataire, sujet, texte, html }
 
 /** Envoi par le serveur SMTP de Gmail (port 465, TLS), authentifié par un
  *  mot de passe d'application Google. « connecter » sert aux essais. */
-export async function envoyerParGmail({ adresse, motDePasse, destinataire, sujet, texte, html,
+export async function envoyerParGmail({ adresse, motDePasse, destinataires, sujet, texte, html,
   connecter = () => tls.connect({ host: "smtp.gmail.com", port: 465, servername: "smtp.gmail.com" }) }) {
   const flux = connecter();
   flux.setEncoding("utf8");
@@ -331,9 +332,9 @@ export async function envoyerParGmail({ adresse, motDePasse, destinataire, sujet
     await dire(Buffer.from(adresse).toString("base64"), 334);
     await dire(Buffer.from(motDePasse.replace(/\s+/g, "")).toString("base64"), 235);
     await dire(`MAIL FROM:<${adresse}>`, 250);
-    await dire(`RCPT TO:<${destinataire}>`, 250);
+    for (const d of destinataires) await dire(`RCPT TO:<${d}>`, 250);
     await dire("DATA", 354);
-    await dire(`${composerMessage({ expediteur: adresse, destinataire, sujet, texte, html })}\r\n.`, 250);
+    await dire(`${composerMessage({ expediteur: adresse, destinataires, sujet, texte, html })}\r\n.`, 250);
     await dire("QUIT", 221);
   } finally {
     flux.end();
@@ -365,8 +366,9 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
       console.log(`${rapport.sujet}\n\n${rapport.texte}`);
     } else {
       const adresse = env.GMAIL_ADRESSE.trim();
-      await envoyerParGmail({ adresse, motDePasse: env.GMAIL_MOT_DE_PASSE, destinataire: (env.RAPPORT_DESTINATAIRE || adresse).trim(), ...rapport });
-      console.log(`Rapport du ${jour} envoyé : ${totaux.visiteurs} visiteurs, ${totaux.pagesVues} pages vues.`);
+      const destinataires = (env.RAPPORT_DESTINATAIRES || adresse).split(/[,;\s]+/).filter(Boolean);
+      await envoyerParGmail({ adresse, motDePasse: env.GMAIL_MOT_DE_PASSE, destinataires, ...rapport });
+      console.log(`Rapport du ${jour} envoyé à ${destinataires.length} adresse(s) : ${totaux.visiteurs} visiteurs, ${totaux.pagesVues} pages vues.`);
     }
   } catch (e) {
     console.error(`rapport-frequentation : ${e.message}`);

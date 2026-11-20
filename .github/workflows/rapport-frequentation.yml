@@ -18,7 +18,8 @@ name: Rapport quotidien de fréquentation (www.anne-fricher.com)
 #   - secret   GMAIL_MOT_DE_PASSE   : mot de passe d'application Google,
 #                                     myaccount.google.com/apppasswords
 #                                     (validation en deux étapes requise)
-# Pour l'envoyer ailleurs : variable RAPPORT_DESTINATAIRE.
+# Destinataires : variable RAPPORT_DESTINATAIRES, adresses séparées par des
+# virgules (par défaut GMAIL_ADRESSE seule).
 
 on:
   schedule:
@@ -60,7 +61,7 @@ jobs:
           CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
           GMAIL_ADRESSE: ${{ secrets.GMAIL_ADRESSE }}
           GMAIL_MOT_DE_PASSE: ${{ secrets.GMAIL_MOT_DE_PASSE }}
-          RAPPORT_DESTINATAIRE: ${{ vars.RAPPORT_DESTINATAIRE }}
+          RAPPORT_DESTINATAIRES: ${{ vars.RAPPORT_DESTINATAIRES }}
           JOUR: ${{ inputs.jour }}
           ESSAI: ${{ inputs.essai && '--essai' || '' }}
         run: node outils/rapport-frequentation.mjs $JOUR $ESSAI
