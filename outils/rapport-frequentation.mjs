@@ -364,7 +364,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     if (essai) {
       console.log(`${rapport.sujet}\n\n${rapport.texte}`);
     } else {
-      await envoyerParGmail({ adresse: env.GMAIL_ADRESSE, motDePasse: env.GMAIL_MOT_DE_PASSE, destinataire: env.RAPPORT_DESTINATAIRE || env.GMAIL_ADRESSE, ...rapport });
+      const adresse = env.GMAIL_ADRESSE.trim();
+      await envoyerParGmail({ adresse, motDePasse: env.GMAIL_MOT_DE_PASSE, destinataire: (env.RAPPORT_DESTINATAIRE || adresse).trim(), ...rapport });
       console.log(`Rapport du ${jour} envoyé : ${totaux.visiteurs} visiteurs, ${totaux.pagesVues} pages vues.`);
     }
   } catch (e) {
