@@ -230,7 +230,8 @@ La fréquentation est mesurée **sans rien ajouter au site** :
 de la veille (API GraphQL, jeu `httpRequestsAdaptive`), en tire des totaux sur
 le modèle du rapport du site de Lecques (dépôt `Mairie Lecques`, même
 présentation, mêmes règles : un visiteur = une IP + un navigateur dans la
-journée, robots écartés) et les envoie par le Worker `mairie-lecques-admin`
+journée, robots écartés ; seule manque la provenance des visiteurs, que
+l'offre gratuite de Cloudflare ne fournit pas) et les envoie par le Worker `mairie-lecques-admin`
 (route `/rapport/frequentation`, Brevo, destinataires `RAPPORT_DESTINATAIRES`).
 Rien n'est conservé hormis le courriel. Les mentions légales l'annoncent.
 
