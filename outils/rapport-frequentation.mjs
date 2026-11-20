@@ -70,8 +70,7 @@ export function provenance(hoteReferent) {
 
 /** Totaux d'une journée à partir des requêtes renvoyées par Cloudflare
  *  ({ clientIP, clientRequestHTTPHost, clientRequestHTTPMethodName,
- *  clientRequestPath, clientRefererHost, userAgent, edgeResponseStatus,
- *  sampleInterval }). */
+ *  clientRequestPath, clientRefererHost, userAgent, edgeResponseStatus }). */
 export function analyserRequetes(requetes) {
   const visiteurs = new Map();
   const pages = new Map();
@@ -79,25 +78,22 @@ export function analyserRequetes(requetes) {
   const sites = new Map();
   let pagesVues = 0;
   let robots = 0;
-  let echantillonne = false;
   for (const r of requetes) {
-    const poids = Number(r.sampleInterval) || 1;
-    if (poids > 1) echantillonne = true;
     const hote = String(r.clientRequestHTTPHost || "").toLowerCase();
     if (hote && !HOTES.has(hote)) continue;
     const navigateur = r.userAgent || "";
-    if (ROBOTS.test(navigateur)) { robots += poids; continue; }
+    if (ROBOTS.test(navigateur)) { robots++; continue; }
     if (r.clientRequestHTTPMethodName !== "GET") continue;
     const chemin = cheminPage(r.clientRequestPath);
     const statut = Number(r.edgeResponseStatus);
     if (statut === 404) {
-      if (!INTROUVABLE_TECHNIQUE.test(chemin)) introuvables.set(chemin, (introuvables.get(chemin) || 0) + poids);
+      if (!INTROUVABLE_TECHNIQUE.test(chemin)) introuvables.set(chemin, (introuvables.get(chemin) || 0) + 1);
       continue;
     }
     if (STATIQUE.test(chemin)) continue;
     if (statut !== 200 && statut !== 304) continue;
-    pagesVues += poids;
-    pages.set(chemin, (pages.get(chemin) || 0) + poids);
+    pagesVues++;
+    pages.set(chemin, (pages.get(chemin) || 0) + 1);
     const qui = `${r.clientIP}\u0000${navigateur}`;
     if (!visiteurs.has(qui)) {
       const v = { mobile: MOBILE.test(navigateur), arrivee: provenance(r.clientRefererHost) };
@@ -115,7 +111,6 @@ export function analyserRequetes(requetes) {
     visiteurs: vus.length,
     pagesVues,
     robots,
-    echantillonne,
     mobiles: compter((v) => v.mobile),
     arrivees: {
       moteur: compter((v) => v.arrivee === "moteur"),
@@ -165,7 +160,7 @@ const REQUETE = `query Frequentation($zone: string!, $debut: Time!, $fin: Time!)
     httpRequestsAdaptive(limit: ${LIMITE}, orderBy: [datetime_ASC],
       filter: { datetime_geq: $debut, datetime_lt: $fin, requestSource: "eyeball" }) {
       datetime clientIP clientRequestHTTPHost clientRequestHTTPMethodName
-      clientRequestPath clientRefererHost userAgent edgeResponseStatus sampleInterval
+      clientRequestPath clientRefererHost userAgent edgeResponseStatus
     }
   } }
 }`;
@@ -259,7 +254,7 @@ export function composerRapport({ jour, totaux, veille, semaineAvant, titres = n
     ["Réseaux sociaux", t.arrivees.reseau],
   ];
   const sujet = `Atelier Anne Fricher · Fréquentation du ${quand} : ${t.visiteurs} visiteur${t.visiteurs > 1 ? "s" : ""}`;
-  const note = `Robots et outils automatiques écartés : ${t.robots} requête${t.robots > 1 ? "s" : ""}.${t.echantillonne ? " Trafic échantillonné par Cloudflare ce jour-là : chiffres estimés." : ""}`;
+  const note = `Robots et outils automatiques écartés : ${t.robots} requête${t.robots > 1 ? "s" : ""}.`;
 
   const texte = [
     `Fréquentation de www.anne-fricher.com — ${quand}`,
