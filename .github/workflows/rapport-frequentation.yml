@@ -1,0 +1,63 @@
+name: Rapport quotidien de fréquentation (www.anne-fricher.com)
+
+# Chaque matin, un courriel de totaux sur la veille : visiteurs, pages vues,
+# pages les plus consultées, téléphones ou ordinateurs, provenance, pages
+# introuvables (outils/rapport-frequentation.mjs). Les requêtes sont lues
+# chez Cloudflare, le temps du calcul, puis oubliées : rien n'est conservé
+# ni écrit dans le dépôt. Le courriel part du Worker d'administration du
+# site de Lecques (route /rapport/frequentation, Brevo).
+#
+# Inactif tant que les réglages ne sont pas renseignés dans GitHub
+# (Settings → Secrets and variables → Actions) :
+#   - variable CF_ZONE_ID    : identifiant de la zone anne-fricher.com
+#                              (tableau de bord Cloudflare, page d'accueil du
+#                              domaine, colonne de droite « Zone ID »)
+#   - secret   CF_API_TOKEN  : jeton Cloudflare (My Profile → API Tokens →
+#                              Create Token → modèle « Read analytics and
+#                              logs », limité à la zone anne-fricher.com)
+#   - secret   RAPPORT_CLE   : la même clé que le secret RAPPORT_CLE du dépôt
+#                              Mairie Lecques
+# Destinataires : RAPPORT_DESTINATAIRES du Worker mairie-lecques-admin.
+
+on:
+  schedule:
+    # Vers 5 h 37 UTC (6 h 37 ou 7 h 37 à Paris), après le rapport de
+    # Lecques ; GitHub retarde parfois ses tâches planifiées.
+    - cron: '37 4 * * *'
+  workflow_dispatch:
+    inputs:
+      jour:
+        description: "Journée à analyser (AAAA-MM-JJ) ; vide : hier"
+        type: string
+        default: ''
+      essai:
+        description: "Essai : afficher le rapport dans le journal de la tâche, sans l'envoyer"
+        type: boolean
+        default: false
+
+concurrency:
+  group: rapport-frequentation
+  cancel-in-progress: false
+
+jobs:
+  rapport:
+    if: vars.CF_ZONE_ID != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Récupérer le dépôt
+        uses: actions/checkout@v4
+
+      - name: Installer Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Calculer et envoyer le rapport
+        env:
+          CF_ZONE_ID: ${{ vars.CF_ZONE_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+          RAPPORT_CLE: ${{ secrets.RAPPORT_CLE }}
+          JOUR: ${{ inputs.jour }}
+          ESSAI: ${{ inputs.essai && '--essai' || '' }}
+        run: node outils/rapport-frequentation.mjs $JOUR $ESSAI

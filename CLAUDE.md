@@ -222,6 +222,23 @@ OpenStreetMap de la page Contact. Préserver cette propriété : elle est annonc
 dans les mentions légales. Toute ajout d'analytics implique de mettre à jour ces
 mentions et, potentiellement, d'ajouter une bannière de consentement.
 
+### Rapport quotidien de fréquentation
+
+La fréquentation est mesurée **sans rien ajouter au site** :
+`outils/rapport-frequentation.mjs`, lancé chaque matin par
+`.github/workflows/rapport-frequentation.yml`, lit chez Cloudflare les requêtes
+de la veille (API GraphQL, jeu `httpRequestsAdaptive`), en tire des totaux sur
+le modèle du rapport du site de Lecques (dépôt `Mairie Lecques`, même
+présentation, mêmes règles : un visiteur = une IP + un navigateur dans la
+journée, robots écartés) et les envoie par le Worker `mairie-lecques-admin`
+(route `/rapport/frequentation`, Brevo, destinataires `RAPPORT_DESTINATAIRES`).
+Rien n'est conservé hormis le courriel. Les mentions légales l'annoncent.
+
+Réglages GitHub : variable `CF_ZONE_ID`, secrets `CF_API_TOKEN` (lecture des
+analytics de la zone) et `RAPPORT_CLE` (celle du dépôt Lecques). Essai sans
+envoi : `CF_ZONE_ID=… CF_API_TOKEN=… node outils/rapport-frequentation.mjs --essai`,
+ou « Run workflow » avec la case « essai » dans l'onglet Actions.
+
 ## 11. Contrôles avant livraison
 
 ```bash

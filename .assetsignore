@@ -5,6 +5,7 @@
 # Même syntaxe que .gitignore.
 
 .git
+.github
 .gitattributes
 .gitignore
 .assetsignore
